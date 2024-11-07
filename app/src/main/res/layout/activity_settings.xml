@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SettingsActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/toolbar_settings"
+        app:titleTextColor="@color/text_color" />
+
+    <FrameLayout
+        android:id="@+id/night_theme_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/night_theme_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="@dimen/settings_padding_vertical"
+            android:layout_marginStart="@dimen/settings_padding_start"
+            android:layout_marginEnd="@dimen/settings_padding_end"
+            android:text="@string/night_theme"
+            android:textColor="@color/settings_color"
+            android:textSize="@dimen/settings_text_size" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/settings_padding_end" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/settings_padding_vertical"
+        android:paddingStart="@dimen/settings_padding_start"
+        android:paddingEnd="@dimen/settings_padding_end"
+        android:text="@string/share_app"
+        android:textColor="@color/settings_color"
+        android:textSize="@dimen/settings_text_size"
+        app:drawableEndCompat="@drawable/ic_share" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/settings_padding_vertical"
+        android:paddingStart="@dimen/settings_padding_start"
+        android:paddingEnd="@dimen/settings_padding_end"
+        android:text="@string/support"
+        android:textColor="@color/settings_color"
+        android:textSize="@dimen/settings_text_size"
+        app:drawableEndCompat="@drawable/ic_support" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/settings_padding_vertical"
+        android:paddingStart="@dimen/settings_padding_start"
+        android:paddingEnd="@dimen/settings_padding_end"
+        android:text="@string/user_agree"
+        android:textColor="@color/settings_color"
+        android:textSize="@dimen/settings_text_size"
+        app:drawableEndCompat="@drawable/ic_user_agree" />
+</LinearLayout>
