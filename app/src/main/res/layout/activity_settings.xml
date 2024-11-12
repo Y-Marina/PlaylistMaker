@@ -12,8 +12,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/toolbar_settings"
-        app:titleTextColor="@color/text_color" />
+        app:title="@string/settings"
+        app:titleTextColor="@color/settings_toolbar_color" />
 
     <FrameLayout
         android:id="@+id/night_theme_card"
@@ -23,53 +23,41 @@
 
         <TextView
             android:id="@+id/night_theme_tv"
+            style="@style/settingsSwitchText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginVertical="@dimen/settings_padding_vertical"
-            android:layout_marginStart="@dimen/settings_padding_start"
-            android:layout_marginEnd="@dimen/settings_padding_end"
-            android:text="@string/night_theme"
-            android:textColor="@color/settings_color"
-            android:textSize="@dimen/settings_text_size" />
+            android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_theme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/settings_padding_end" />
+            android:layout_marginEnd="@dimen/settings_padding_end"
+            android:theme="@style/MySwitch"
+            tools:checked="true" />
     </FrameLayout>
 
     <TextView
+        android:id="@+id/share_tv"
+        style="@style/settingsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/settings_padding_vertical"
-        android:paddingStart="@dimen/settings_padding_start"
-        android:paddingEnd="@dimen/settings_padding_end"
         android:text="@string/share_app"
-        android:textColor="@color/settings_color"
-        android:textSize="@dimen/settings_text_size"
         app:drawableEndCompat="@drawable/ic_share" />
 
     <TextView
+        android:id="@+id/support_tv"
+        style="@style/settingsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/settings_padding_vertical"
-        android:paddingStart="@dimen/settings_padding_start"
-        android:paddingEnd="@dimen/settings_padding_end"
         android:text="@string/support"
-        android:textColor="@color/settings_color"
-        android:textSize="@dimen/settings_text_size"
         app:drawableEndCompat="@drawable/ic_support" />
 
     <TextView
+        android:id="@+id/agree_tv"
+        style="@style/settingsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/settings_padding_vertical"
-        android:paddingStart="@dimen/settings_padding_start"
-        android:paddingEnd="@dimen/settings_padding_end"
         android:text="@string/user_agree"
-        android:textColor="@color/settings_color"
-        android:textSize="@dimen/settings_text_size"
         app:drawableEndCompat="@drawable/ic_user_agree" />
 </LinearLayout>

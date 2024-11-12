@@ -1,11 +1,17 @@
 package com.hfad.playlistmaker
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
+import android.widget.Switch
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
@@ -24,7 +30,55 @@ class SettingsActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar?.let {
             it.setNavigationIcon(R.drawable.ic_arrow_back_24)
+            it.setNavigationIconTint(getColor(R.color.ic_color))
             it.setNavigationOnClickListener { this.finish() }
         }
+
+        val switchTheme = findViewById<SwitchCompat>(R.id.switch_theme)
+        val shareTextView = findViewById<TextView>(R.id.share_tv)
+        val supportTextView = findViewById<TextView>(R.id.support_tv)
+        val agreeTextView = findViewById<TextView>(R.id.agree_tv)
+
+        switchTheme.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+
+        switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+
+        shareTextView.setOnClickListener {
+            share()
+        }
+
+        supportTextView.setOnClickListener {
+            support()
+        }
+
+        agreeTextView.setOnClickListener {
+            val agreementIntent = Intent(this, AgreeActivity::class.java)
+            startActivity(agreementIntent)
+        }
+    }
+
+    private fun share() {
+        val message = getString(R.string.shareMessage)
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "*/*"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+        startActivity(shareIntent)
+    }
+
+    private fun support() {
+        val messageSubject = getString(R.string.supportMessageSubject)
+        val messageText = getString(R.string.supportMessageText)
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:")
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.studentEmail)))
+        intent.putExtra(Intent.EXTRA_SUBJECT, messageSubject)
+        intent.putExtra(Intent.EXTRA_TEXT, messageText)
+        startActivity(intent)
     }
 }
