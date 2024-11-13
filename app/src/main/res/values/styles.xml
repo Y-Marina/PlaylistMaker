@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="mainCardView">
+
+    <style name="mainCardView" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_marginHorizontal">@dimen/main_horizontal_margin</item>
         <item name="android:layout_marginTop">@dimen/main_card_margin_top</item>
         <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">@dimen/main_card_corner_radius</item>
     </style>
     <style name="mainTextView">
         <item name="android:layout_gravity">center</item>
@@ -22,13 +24,11 @@
         <item name="android:textSize">@dimen/settings_text_size</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
-    <style name="settingsSwitchText">
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_marginVertical">@dimen/settings_padding_vertical</item>
-        <item name="android:layout_marginStart">@dimen/settings_padding_start</item>
-        <item name="android:layout_marginEnd">@dimen/settings_padding_end</item>
+    <style name="settingsSwitch">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">@dimen/settings_padding_start</item>
+        <item name="android:paddingVertical">@dimen/settings_padding_vertical</item>
         <item name="android:text">@string/night_theme</item>
-        <item name="android:textColor">@color/settings_color</item>
         <item name="android:textSize">@dimen/settings_text_size</item>
     </style>
     <style name="MySwitch">

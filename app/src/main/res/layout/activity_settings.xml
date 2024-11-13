@@ -15,27 +15,12 @@
         app:title="@string/settings"
         app:titleTextColor="@color/settings_toolbar_color" />
 
-    <FrameLayout
-        android:id="@+id/night_theme_card"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_theme"
+        style="@style/settingsSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/night_theme_tv"
-            style="@style/settingsSwitchText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_theme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/settings_padding_end"
-            android:theme="@style/MySwitch"
-            tools:checked="true" />
-    </FrameLayout>
+        android:theme="@style/MySwitch" />
 
     <TextView
         android:id="@+id/share_tv"

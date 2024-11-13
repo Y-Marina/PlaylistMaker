@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.google.android.material.appbar.MaterialToolbar
 import kotlin.properties.Delegates
 
@@ -23,7 +24,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
 
-    var searchText = ""
+    private var searchText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                clearButton.visibility = clearButtonVisibility(p0)
+                clearButton.isVisible = !p0.isNullOrEmpty()
             }
 
             override fun afterTextChanged(text: Editable?) {
@@ -63,14 +64,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.addTextChangedListener(textWatcher)
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
