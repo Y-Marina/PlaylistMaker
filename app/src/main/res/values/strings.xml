@@ -4,9 +4,16 @@
     <string name="search">Поиск</string>
     <string name="media">Медиатека</string>
     <string name="settings">Настройки</string>
-    <string name="toolbar_settings">Настройки</string>
+
+    <string name="agreement">Соглашение</string>
     <string name="night_theme">Темная тема</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agree">Пользовательское соглашение</string>
+
+    <string name="agree_url">https://yandex.ru/legal/practicum_offer</string>
+    <string name="shareMessage">Привет, Android-разработка — это круто! https://practicum.yandex.ru/android-developer</string>
+    <string name="supportMessageSubject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="supportMessageText">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="studentEmail">pumpkinjust@yandex.ru</string>
 </resources>
