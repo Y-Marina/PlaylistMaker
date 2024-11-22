@@ -30,12 +30,12 @@
         android:drawableTint="@color/edit_text_color"
         android:hint="@string/search"
         android:inputType="text"
-        android:textColor="@color/black"
         android:maxLines="1"
         android:paddingStart="13dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:paddingEnd="38dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
         android:textColorHint="@color/edit_text_color"
         android:textCursorDrawable="@drawable/cursor_color"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,4 +52,17 @@
         app:layout_constraintBottom_toBottomOf="@id/search_et"
         app:layout_constraintEnd_toEndOf="@id/search_et"
         app:layout_constraintTop_toTopOf="@id/search_et" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/content_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_et"
+        tools:listitem="@layout/search_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>
