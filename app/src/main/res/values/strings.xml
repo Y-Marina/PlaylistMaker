@@ -16,4 +16,6 @@
     <string name="supportMessageSubject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="supportMessageText">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="studentEmail">pumpkinjust@yandex.ru</string>
+
+    <string name="photo_description">изображение альбома</string>
 </resources>

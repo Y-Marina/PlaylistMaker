@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/artwork_im"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="13dp"
+        android:contentDescription="@string/photo_description"
+        android:src="@drawable/ic_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/track_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="@color/track_name_color"
+        app:layout_constraintEnd_toStartOf="@id/chevron_im"
+        app:layout_constraintStart_toEndOf="@id/artwork_im"
+        app:layout_constraintTop_toTopOf="@id/artwork_im"
+        tools:text="Smells Like Teen Spirit" />
+
+    <TextView
+        android:id="@+id/artist_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="1dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="@color/second_text_color"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/artwork_im"
+        app:layout_constraintEnd_toEndOf="@id/point_im"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/artwork_im"
+        app:layout_constraintTop_toBottomOf="@id/track_name_tv"
+        tools:text="Nirvana" />
+
+    <ImageView
+        android:id="@+id/point_im"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_point"
+        app:layout_constraintBottom_toBottomOf="@id/artist_name_tv"
+        app:layout_constraintStart_toEndOf="@id/artist_name_tv"
+        app:layout_constraintTop_toTopOf="@id/artist_name_tv" />
+
+    <TextView
+        android:id="@+id/track_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/ys_display_regular"
+        android:textColor="@color/second_text_color"
+        app:layout_constraintBottom_toBottomOf="@id/point_im"
+        app:layout_constraintEnd_toStartOf="@id/chevron_im"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/point_im"
+        app:layout_constraintTop_toTopOf="@id/point_im"
+        tools:text="5:01" />
+
+    <ImageView
+        android:id="@+id/chevron_im"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_album_chevron"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
