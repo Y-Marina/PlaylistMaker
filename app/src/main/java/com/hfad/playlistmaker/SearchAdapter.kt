@@ -30,12 +30,14 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
     inner class SearchViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val trackName = item.findViewById<TextView>(R.id.track_name_tv)
         private val artistName = item.findViewById<TextView>(R.id.artist_name_tv)
+        private val trackTime = item.findViewById<TextView>(R.id.track_time_tv)
         private val artwork = item.findViewById<ImageView>(R.id.artwork_im)
         private val context = item.rootView.context
 
         fun bind(track: Track) {
             trackName.text = track.trackName
-            artistName.text = track.description
+            artistName.text = track.artistName
+            trackTime.text = track.trackTime
             Glide
                 .with(context)
                 .load(track.artworkUrl100)
