@@ -37,7 +37,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
         fun bind(track: Track) {
             trackName.text = track.trackName
             artistName.text = track.artistName
-            trackTime.text = track.trackTime
+            trackTime.text = track.time
             Glide
                 .with(context)
                 .load(track.artworkUrl100)
