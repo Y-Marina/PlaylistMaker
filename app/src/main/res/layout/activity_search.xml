@@ -29,12 +29,14 @@
         android:drawablePadding="8dp"
         android:drawableTint="@color/edit_text_color"
         android:hint="@string/search"
+        android:imeOptions="actionDone"
         android:inputType="text"
         android:maxLines="1"
         android:paddingStart="13dp"
         android:paddingTop="8dp"
         android:paddingEnd="38dp"
         android:paddingBottom="8dp"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textColorHint="@color/edit_text_color"
         android:textCursorDrawable="@drawable/cursor_color"
@@ -65,4 +67,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_et"
         tools:listitem="@layout/search_item" />
+
+    <include
+        android:id="@+id/empty_message"
+        layout="@layout/empty_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/no_internet_message"
+        layout="@layout/no_internet_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

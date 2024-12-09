@@ -18,4 +18,8 @@
     <string name="studentEmail">pumpkinjust@yandex.ru</string>
 
     <string name="photo_description">изображение альбома</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="no_internet">Проблемы со связью</string>
+    <string name="check_internet">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update">Обновить</string>
 </resources>
