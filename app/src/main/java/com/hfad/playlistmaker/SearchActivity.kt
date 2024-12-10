@@ -99,6 +99,7 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             searchEditText.setText("")
             clearList()
+            hideAllMessage()
         }
 
         val textWatcher = object : TextWatcher {
@@ -111,6 +112,11 @@ class SearchActivity : AppCompatActivity() {
 
             override fun afterTextChanged(text: Editable?) {
                 searchText = text.toString()
+
+                if (text?.isEmpty() == true) {
+                    clearList()
+                    hideAllMessage()
+                }
             }
         }
 
@@ -157,6 +163,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showEmptyMessage() {
+        noInternetMessageLayout.visibility = View.GONE
         emptyMessageLayout.visibility = View.VISIBLE
         clearList()
     }
@@ -167,6 +174,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showNoInternetMessage() {
+        emptyMessageLayout.visibility = View.GONE
         noInternetMessageLayout.visibility = View.VISIBLE
         clearList()
     }
