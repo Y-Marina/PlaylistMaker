@@ -11,7 +11,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.hfad.playlistmaker.common.dpToPx
 
-class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+class SearchAdapter(val callback: Callback) :
+    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+    interface Callback {
+        fun onItemClick(track: Track)
+    }
+
     var data: List<Track> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -33,6 +38,15 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
         private val trackTime = item.findViewById<TextView>(R.id.track_time_tv)
         private val artwork = item.findViewById<ImageView>(R.id.artwork_im)
         private val context = item.rootView.context
+
+        init {
+            item.rootView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    callback.onItemClick(data[position])
+                }
+            }
+        }
 
         fun bind(track: Track) {
             trackName.text = track.trackName

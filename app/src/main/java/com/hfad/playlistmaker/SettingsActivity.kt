@@ -1,12 +1,10 @@
 package com.hfad.playlistmaker
 
-import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
-import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +14,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
 
+const val PREFERENCES = "preferences"
+const val THEME_KEY = "key_for_theme"
+
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var sharedPrefs: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -26,6 +30,8 @@ class SettingsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar?.let {
@@ -39,7 +45,8 @@ class SettingsActivity : AppCompatActivity() {
         val supportTextView = findViewById<TextView>(R.id.support_tv)
         val agreeTextView = findViewById<TextView>(R.id.agree_tv)
 
-        switchTheme.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        switchTheme.isChecked = (resources.configuration.uiMode
+                and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -47,6 +54,8 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
+
+            sharedPrefs.edit().putBoolean(THEME_KEY, isChecked).apply()
         }
 
         shareTextView.setOnClickListener {

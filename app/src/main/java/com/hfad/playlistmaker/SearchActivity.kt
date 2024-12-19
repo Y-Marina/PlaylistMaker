@@ -1,5 +1,6 @@
 package com.hfad.playlistmaker
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,7 +23,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     private val iTunesBaseUrl = "https://itunes.apple.com"
 
@@ -34,21 +35,29 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ITunesApi::class.java)
 
     private val tracks = ArrayList<Track>()
-    private val adapter = SearchAdapter()
+    private val adapter = SearchAdapter(this)
+
+    private val lastViewTracks = ArrayList<Track>()
+    private val lastViewAdapter = SearchAdapter(this)
+
+    private lateinit var searchHistory: SearchHistory
 
     companion object {
         const val SEARCH_TEXT_KEY = "searchTextKey"
     }
 
+    private lateinit var clearListButton: Button
     private lateinit var updateButton: Button
     private lateinit var noInternetMessageLayout: View
     private lateinit var emptyMessageLayout: View
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
+    private lateinit var historyView: View
+    private lateinit var historyList: RecyclerView
 
     private var searchText = ""
 
-    private val trackList = emptyList<Track>()
+    private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,14 +69,20 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
+        clearListButton = findViewById(R.id.clear_list_button)
         updateButton = findViewById(R.id.update_button)
         noInternetMessageLayout = findViewById(R.id.no_internet_message)
         emptyMessageLayout = findViewById(R.id.empty_message)
         searchEditText = findViewById(R.id.search_et)
         clearButton = findViewById(R.id.clear_im)
+        historyView = findViewById(R.id.history_view)
+        historyList = findViewById(R.id.history_list)
 
         val contentList = findViewById<RecyclerView>(R.id.content_list)
-        val searchAdapter = SearchAdapter()
+
+        val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+
+        searchHistory = SearchHistory(sharedPreferences)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar?.let {
@@ -76,13 +91,11 @@ class SearchActivity : AppCompatActivity() {
             it.setNavigationOnClickListener { this.finish() }
         }
 
-        contentList.adapter = searchAdapter
-        searchAdapter.data = trackList
-
+        contentList.adapter = adapter
         adapter.data = tracks
 
-        contentList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        contentList.adapter = adapter
+        historyList.adapter = lastViewAdapter
+        lastViewAdapter.data = lastViewTracks
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -90,6 +103,11 @@ class SearchActivity : AppCompatActivity() {
                 true
             }
             false
+        }
+
+        clearListButton.setOnClickListener {
+            searchHistory.clear()
+            hideHistoryList()
         }
 
         updateButton.setOnClickListener {
@@ -101,6 +119,19 @@ class SearchActivity : AppCompatActivity() {
             clearList()
             hideAllMessage()
         }
+
+        lastViewTracks.addAll(searchHistory.getAllTrack())
+        showHistoryList()
+
+        listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == SearchHistory.LAST_VIEW_KEY) {
+                lastViewTracks.clear()
+                lastViewTracks.addAll(searchHistory.getAllTrack())
+                lastViewAdapter.notifyDataSetChanged()
+            }
+        }
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -116,6 +147,7 @@ class SearchActivity : AppCompatActivity() {
                 if (text?.isEmpty() == true) {
                     clearList()
                     hideAllMessage()
+                    showHistoryList()
                 }
             }
         }
@@ -123,8 +155,19 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.addTextChangedListener(textWatcher)
     }
 
+    private fun showHistoryList() {
+        if (lastViewTracks.isNotEmpty()) {
+            historyView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideHistoryList() {
+        historyView.visibility = View.GONE
+    }
+
     private fun search() {
         if (searchEditText.text.isNotEmpty()) {
+            hideHistoryList()
             iTunesService.search(searchEditText.text.toString())
                 .enqueue(object : Callback<MusicResponse> {
                     override fun onResponse(
@@ -188,5 +231,9 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         val text = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
         searchEditText.setText(text)
+    }
+
+    override fun onItemClick(track: Track) {
+        searchHistory.addTrack(track)
     }
 }
