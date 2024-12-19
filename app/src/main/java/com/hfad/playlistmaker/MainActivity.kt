@@ -2,6 +2,7 @@ package com.hfad.playlistmaker
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -29,10 +30,17 @@ class MainActivity : AppCompatActivity() {
         val settingsCard = findViewById<MaterialCardView>(R.id.settings_card)
 
         sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        val theme = sharedPrefs.getString(THEME_KEY, "day")
-        when (theme) {
-            "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        if (!sharedPrefs.contains(THEME_KEY)) {
+            val isNightMode = (resources.configuration.uiMode
+                    and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            sharedPrefs.edit().putBoolean(THEME_KEY, isNightMode).apply()
+        } else {
+            val theme = sharedPrefs.getBoolean(THEME_KEY, false)
+            if (theme) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
         searchCard.setOnClickListener {
