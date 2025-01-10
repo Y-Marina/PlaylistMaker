@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.appbar.MaterialToolbar
 
 class MediaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +16,13 @@ class MediaActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        toolbar?.let {
+            it.setNavigationIcon(R.drawable.ic_arrow_back_24)
+            it.setNavigationIconTint(getColor(R.color.ic_color))
+            it.setNavigationOnClickListener { this.finish() }
         }
     }
 }
