@@ -77,8 +77,6 @@ class PlayActivity : AppCompatActivity() {
             year.text = track.getYear()
             genre.text = track.primaryGenreName
             country.text = track.country
-
-            println("myTag ${track.trackName}")
         }
     }
 }
