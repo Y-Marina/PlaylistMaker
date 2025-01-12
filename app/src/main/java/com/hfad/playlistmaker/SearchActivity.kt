@@ -1,5 +1,6 @@
 package com.hfad.playlistmaker
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import retrofit2.Call
@@ -235,5 +235,8 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     override fun onItemClick(track: Track) {
         searchHistory.addTrack(track)
+        val playIntent = Intent(this, PlayActivity::class.java)
+        playIntent.putExtra(TRACK_ITEM, track)
+        startActivity(playIntent)
     }
 }
