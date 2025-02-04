@@ -3,6 +3,8 @@ package com.hfad.playlistmaker
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -10,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -44,8 +47,17 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     companion object {
         const val SEARCH_TEXT_KEY = "searchTextKey"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
+    private val searchRunnable = Runnable { search() }
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private var isClickAllowed = true
+
+    private lateinit var progressBar: ProgressBar
     private lateinit var clearListButton: Button
     private lateinit var updateButton: Button
     private lateinit var noInternetMessageLayout: View
@@ -69,6 +81,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
             insets
         }
 
+        progressBar = findViewById(R.id.progress_bar)
         clearListButton = findViewById(R.id.clear_list_button)
         updateButton = findViewById(R.id.update_button)
         noInternetMessageLayout = findViewById(R.id.no_internet_message)
@@ -110,10 +123,6 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
             hideHistoryList()
         }
 
-        updateButton.setOnClickListener {
-            search()
-        }
-
         clearButton.setOnClickListener {
             searchEditText.setText("")
             clearList()
@@ -139,6 +148,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 clearButton.isVisible = !p0.isNullOrEmpty()
+                searchDebounce()
             }
 
             override fun afterTextChanged(text: Editable?) {
@@ -167,6 +177,9 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     private fun search() {
         if (searchEditText.text.isNotEmpty()) {
+
+            progressBar.visibility = View.VISIBLE
+
             hideHistoryList()
             iTunesService.search(searchEditText.text.toString())
                 .enqueue(object : Callback<MusicResponse> {
@@ -174,6 +187,9 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
                         call: Call<MusicResponse>,
                         response: Response<MusicResponse>
                     ) {
+
+                        progressBar.visibility = View.GONE
+
                         if (response.code() == 200) {
                             tracks.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
@@ -194,6 +210,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
                         call: Call<MusicResponse>,
                         throwable: Throwable
                     ) {
+                        progressBar.visibility = View.GONE
                         showNoInternetMessage()
                     }
                 })
@@ -234,9 +251,24 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
     }
 
     override fun onItemClick(track: Track) {
+        clickDebounce()
         searchHistory.addTrack(track)
         val playIntent = Intent(this, PlayActivity::class.java)
         playIntent.putExtra(TRACK_ITEM, track)
         startActivity(playIntent)
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 }

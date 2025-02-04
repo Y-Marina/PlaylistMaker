@@ -17,7 +17,8 @@ data class Track(
     val collectionName: String?,
     val releaseDate: String,
     val primaryGenreName: String,
-    val country: String
+    val country: String,
+    val previewUrl: String
 ) : Parcelable {
     fun getTime(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime)
@@ -26,6 +27,6 @@ data class Track(
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
 
     fun getYear(): String {
-        return SimpleDateFormat("yyyy", Locale.getDefault()).format(trackTime)
+        return releaseDate.subSequence(0, 4).toString()
     }
 }
