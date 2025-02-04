@@ -70,39 +70,45 @@
                 app:layout_constraintTop_toBottomOf="@id/track_name_tv"
                 tools:text="The Beatles" />
 
-            <ImageButton
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/add_to_playlist_bt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:background="@null"
+                android:button="@drawable/add_to_playlist_selector"
                 android:src="@drawable/ic_add_to_playlist_button"
                 app:layout_constraintBottom_toBottomOf="@id/play_bt"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/play_bt" />
+                app:layout_constraintTop_toTopOf="@id/play_bt"
+                app:useMaterialThemeColors="false" />
 
-            <ImageButton
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/play_bt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:background="@null"
+                android:button="@drawable/play_selector"
                 android:src="@drawable/ic_play_button"
                 app:layout_constraintEnd_toStartOf="@id/favorite_bt"
                 app:layout_constraintStart_toEndOf="@id/add_to_playlist_bt"
-                app:layout_constraintTop_toBottomOf="@id/artist_name_tv" />
+                app:layout_constraintTop_toBottomOf="@id/artist_name_tv"
+                app:useMaterialThemeColors="false" />
 
-            <ImageButton
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/favorite_bt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:background="@null"
-                android:src="@drawable/ic_favorite_button"
+                android:button="@drawable/favorite_selector"
                 app:layout_constraintBottom_toBottomOf="@id/play_bt"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/play_bt" />
+                app:layout_constraintTop_toTopOf="@id/play_bt"
+                app:useMaterialThemeColors="false"
+                tools:checked="false" />
 
             <TextView
                 android:id="@+id/play_time"
