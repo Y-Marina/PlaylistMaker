@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.ui.search
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,22 +20,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.hfad.playlistmaker.Creator
+import com.hfad.playlistmaker.R
+import com.hfad.playlistmaker.data.SearchHistory
+import com.hfad.playlistmaker.domian.api.MusicInteractor
+import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.ui.settings.PREFERENCES
+import com.hfad.playlistmaker.ui.playback.PlayActivity
+import com.hfad.playlistmaker.ui.playback.TRACK_ITEM
 
 class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
-
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
 
     private val tracks = ArrayList<Track>()
     private val adapter = SearchAdapter(this)
@@ -71,6 +65,8 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
+    private lateinit var musicInteractor: MusicInteractor
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -90,6 +86,8 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
         clearButton = findViewById(R.id.clear_im)
         historyView = findViewById(R.id.history_view)
         historyList = findViewById(R.id.history_list)
+
+        musicInteractor = Creator.provideMusicInteractor()
 
         val contentList = findViewById<RecyclerView>(R.id.content_list)
 
@@ -181,39 +179,32 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
             progressBar.visibility = View.VISIBLE
 
             hideHistoryList()
-            iTunesService.search(searchEditText.text.toString())
-                .enqueue(object : Callback<MusicResponse> {
-                    override fun onResponse(
-                        call: Call<MusicResponse>,
-                        response: Response<MusicResponse>
-                    ) {
 
+            musicInteractor.searchTracks(searchText, object : MusicInteractor.TracksConsumer {
+                override fun onSuccess(foundTracks: List<Track>) {
+                    runOnUiThread {
                         progressBar.visibility = View.GONE
+                        tracks.clear()
+                        if (foundTracks.isNotEmpty()) {
+                            tracks.addAll(foundTracks)
+                            adapter.notifyDataSetChanged()
+                        }
 
-                        if (response.code() == 200) {
-                            tracks.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                tracks.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                            }
-                            if (tracks.isEmpty()) {
-                                showEmptyMessage()
-                            } else {
-                                hideAllMessage()
-                            }
+                        if (tracks.isEmpty()) {
+                            showEmptyMessage()
                         } else {
-                            showNoInternetMessage()
+                            hideAllMessage()
                         }
                     }
+                }
 
-                    override fun onFailure(
-                        call: Call<MusicResponse>,
-                        throwable: Throwable
-                    ) {
+                override fun onFailure(exception: Exception) {
+                    runOnUiThread {
                         progressBar.visibility = View.GONE
                         showNoInternetMessage()
                     }
-                })
+                }
+            })
         }
     }
 

@@ -1,7 +1,8 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.hfad.playlistmaker.domian.models.Track
 
 class SearchHistory(val sharedPreferences: SharedPreferences) {
     companion object {

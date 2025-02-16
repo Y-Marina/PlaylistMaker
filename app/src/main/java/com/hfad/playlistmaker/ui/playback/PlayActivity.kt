@@ -1,10 +1,9 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.ui.playback
 
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +15,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
+import com.hfad.playlistmaker.domian.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -50,7 +52,7 @@ class PlayActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var playButton: Button
+    private lateinit var playButton: MaterialCheckBox
     private lateinit var progressTime: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +144,10 @@ class PlayActivity : AppCompatActivity() {
 
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
+            }
+
+            STATE_DEFAULT -> {
+                playButton.isChecked = false
             }
         }
     }

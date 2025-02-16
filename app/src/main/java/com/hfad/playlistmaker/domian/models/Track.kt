@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.domian.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
@@ -12,7 +12,7 @@ data class Track(
     val trackName: String,
     val artistName: String,
     @SerializedName("trackTimeMillis")
-    private val trackTime: Long,
+    val trackTime: Long,
     val artworkUrl100: String,
     val collectionName: String?,
     val releaseDate: String,

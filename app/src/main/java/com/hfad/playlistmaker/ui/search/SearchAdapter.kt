@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.ui.search
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
+import com.hfad.playlistmaker.domian.models.Track
 
 class SearchAdapter(val callback: Callback) :
     RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {

@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.ui.main
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,6 +10,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.card.MaterialCardView
+import com.hfad.playlistmaker.R
+import com.hfad.playlistmaker.ui.playlist.MediaActivity
+import com.hfad.playlistmaker.ui.settings.PREFERENCES
+import com.hfad.playlistmaker.ui.search.SearchActivity
+import com.hfad.playlistmaker.ui.settings.SettingsActivity
+import com.hfad.playlistmaker.ui.settings.THEME_KEY
 
 class MainActivity : AppCompatActivity() {
 
