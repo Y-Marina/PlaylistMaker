@@ -13,14 +13,14 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
+import com.hfad.playlistmaker.Creator
 import com.hfad.playlistmaker.R
 
 const val PREFERENCES = "preferences"
-const val THEME_KEY = "key_for_theme"
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var sharedPrefs: SharedPreferences
+    private val settingsRepository by lazy { Creator.provideSettingsRepository(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +31,6 @@ class SettingsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar?.let {
@@ -56,7 +54,7 @@ class SettingsActivity : AppCompatActivity() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
 
-            sharedPrefs.edit().putBoolean(THEME_KEY, isChecked).apply()
+            settingsRepository.saveTheme(isChecked)
         }
 
         shareTextView.setOnClickListener {

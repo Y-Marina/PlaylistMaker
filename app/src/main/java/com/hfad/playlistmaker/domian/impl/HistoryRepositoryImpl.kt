@@ -1,27 +1,28 @@
-package com.hfad.playlistmaker.data
+package com.hfad.playlistmaker.domian.impl
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.hfad.playlistmaker.data.history.HistoryRepository
 import com.hfad.playlistmaker.domian.models.Track
 
-class SearchHistory(val sharedPreferences: SharedPreferences) {
+class HistoryRepositoryImpl(val sharedPreferences: SharedPreferences): HistoryRepository {
     companion object {
         const val LAST_VIEW_KEY = "last_view_key"
     }
 
-    fun getAllTrack(): Array<Track> {
+    override fun getAllTrack(): Array<Track> {
         val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyArray()
         return Gson().fromJson(json, Array<Track>::class.java)
     }
 
-    fun addTrack(track: Track) {
+    override fun addTrack(track: Track) {
         val tracks = getAllTrack()
         val newTracks = tracks.filterNot { it.trackId == track.trackId }.take(9).toMutableList()
         newTracks.add(0, track)
         saveTracks(newTracks)
     }
 
-    fun clear() {
+    override fun clear() {
         saveTracks(emptyList())
     }
 

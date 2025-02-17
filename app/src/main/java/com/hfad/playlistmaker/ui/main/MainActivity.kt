@@ -1,7 +1,6 @@
 package com.hfad.playlistmaker.ui.main
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -10,16 +9,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.card.MaterialCardView
+import com.hfad.playlistmaker.Creator
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.ui.playlist.MediaActivity
-import com.hfad.playlistmaker.ui.settings.PREFERENCES
 import com.hfad.playlistmaker.ui.search.SearchActivity
 import com.hfad.playlistmaker.ui.settings.SettingsActivity
-import com.hfad.playlistmaker.ui.settings.THEME_KEY
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var sharedPrefs: SharedPreferences
+    private val settingsRepository by lazy { Creator.provideSettingsRepository(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +33,12 @@ class MainActivity : AppCompatActivity() {
         val mediaCard = findViewById<MaterialCardView>(R.id.media_card)
         val settingsCard = findViewById<MaterialCardView>(R.id.settings_card)
 
-        sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        if (!sharedPrefs.contains(THEME_KEY)) {
+        if (settingsRepository.hasSavedTheme()) {
             val isNightMode = (resources.configuration.uiMode
                     and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            sharedPrefs.edit().putBoolean(THEME_KEY, isNightMode).apply()
+            settingsRepository.saveTheme(isNightMode)
         } else {
-            val theme = sharedPrefs.getBoolean(THEME_KEY, false)
+            val theme = settingsRepository.getTheme()
             if (theme) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {

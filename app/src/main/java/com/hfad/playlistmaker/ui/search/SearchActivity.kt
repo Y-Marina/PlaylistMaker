@@ -22,7 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.playlistmaker.Creator
 import com.hfad.playlistmaker.R
-import com.hfad.playlistmaker.data.SearchHistory
+import com.hfad.playlistmaker.data.history.HistoryRepository
+import com.hfad.playlistmaker.domian.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.ui.settings.PREFERENCES
@@ -37,7 +38,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
     private val lastViewTracks = ArrayList<Track>()
     private val lastViewAdapter = SearchAdapter(this)
 
-    private lateinit var searchHistory: SearchHistory
+    private val historyRepository: HistoryRepository by lazy { Creator.provideHistoryRepository(this) }
 
     companion object {
         const val SEARCH_TEXT_KEY = "searchTextKey"
@@ -65,7 +66,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
-    private lateinit var musicInteractor: MusicInteractor
+    private val musicInteractor: MusicInteractor by lazy { Creator.provideMusicInteractor() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,13 +88,9 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
         historyView = findViewById(R.id.history_view)
         historyList = findViewById(R.id.history_list)
 
-        musicInteractor = Creator.provideMusicInteractor()
-
         val contentList = findViewById<RecyclerView>(R.id.content_list)
 
         val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-
-        searchHistory = SearchHistory(sharedPreferences)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar?.let {
@@ -117,7 +114,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
         }
 
         clearListButton.setOnClickListener {
-            searchHistory.clear()
+            historyRepository.clear()
             hideHistoryList()
         }
 
@@ -127,13 +124,13 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
             hideAllMessage()
         }
 
-        lastViewTracks.addAll(searchHistory.getAllTrack())
+        lastViewTracks.addAll(historyRepository.getAllTrack())
         showHistoryList()
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == SearchHistory.LAST_VIEW_KEY) {
+            if (key == HistoryRepositoryImpl.LAST_VIEW_KEY) {
                 lastViewTracks.clear()
-                lastViewTracks.addAll(searchHistory.getAllTrack())
+                lastViewTracks.addAll(historyRepository.getAllTrack())
                 lastViewAdapter.notifyDataSetChanged()
             }
         }
@@ -243,7 +240,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     override fun onItemClick(track: Track) {
         clickDebounce()
-        searchHistory.addTrack(track)
+        historyRepository.addTrack(track)
         val playIntent = Intent(this, PlayActivity::class.java)
         playIntent.putExtra(TRACK_ITEM, track)
         startActivity(playIntent)
