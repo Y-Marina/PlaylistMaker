@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.playlistmaker.Creator
 import com.hfad.playlistmaker.R
-import com.hfad.playlistmaker.data.history.HistoryRepository
+import com.hfad.playlistmaker.domian.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.models.Track
@@ -38,7 +38,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
     private val lastViewTracks = ArrayList<Track>()
     private val lastViewAdapter = SearchAdapter(this)
 
-    private val historyRepository: HistoryRepository by lazy { Creator.provideHistoryRepository(this) }
+    private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor(this) }
 
     companion object {
         const val SEARCH_TEXT_KEY = "searchTextKey"
@@ -114,7 +114,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
         }
 
         clearListButton.setOnClickListener {
-            historyRepository.clear()
+            historyInteractor.clear()
             hideHistoryList()
         }
 
@@ -124,13 +124,22 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
             hideAllMessage()
         }
 
-        lastViewTracks.addAll(historyRepository.getAllTrack())
+        historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
+            override fun consume(trackList: List<Track>) {
+                lastViewTracks.addAll(trackList)
+            }
+        })
+
         showHistoryList()
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == HistoryRepositoryImpl.LAST_VIEW_KEY) {
                 lastViewTracks.clear()
-                lastViewTracks.addAll(historyRepository.getAllTrack())
+                historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
+                    override fun consume(trackList: List<Track>) {
+                        lastViewTracks.addAll(trackList)
+                    }
+                })
                 lastViewAdapter.notifyDataSetChanged()
             }
         }
@@ -240,7 +249,7 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.Callback {
 
     override fun onItemClick(track: Track) {
         clickDebounce()
-        historyRepository.addTrack(track)
+        historyInteractor.addTrack(track)
         val playIntent = Intent(this, PlayActivity::class.java)
         playIntent.putExtra(TRACK_ITEM, track)
         startActivity(playIntent)

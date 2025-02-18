@@ -1,7 +1,6 @@
 package com.hfad.playlistmaker.ui.settings
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
@@ -20,7 +19,7 @@ const val PREFERENCES = "preferences"
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val settingsRepository by lazy { Creator.provideSettingsRepository(this) }
+    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
 
-            settingsRepository.saveTheme(isChecked)
+            settingsInteractor.saveTheme(isChecked)
         }
 
         shareTextView.setOnClickListener {

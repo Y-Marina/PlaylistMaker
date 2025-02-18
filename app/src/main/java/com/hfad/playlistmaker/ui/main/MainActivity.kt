@@ -17,7 +17,7 @@ import com.hfad.playlistmaker.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private val settingsRepository by lazy { Creator.provideSettingsRepository(this) }
+    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity() {
         val mediaCard = findViewById<MaterialCardView>(R.id.media_card)
         val settingsCard = findViewById<MaterialCardView>(R.id.settings_card)
 
-        if (settingsRepository.hasSavedTheme()) {
+        if (settingsInteractor.hasSavedTheme()) {
             val isNightMode = (resources.configuration.uiMode
                     and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            settingsRepository.saveTheme(isNightMode)
+            settingsInteractor.saveTheme(isNightMode)
         } else {
-            val theme = settingsRepository.getTheme()
+            val theme = settingsInteractor.getTheme()
             if (theme) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {

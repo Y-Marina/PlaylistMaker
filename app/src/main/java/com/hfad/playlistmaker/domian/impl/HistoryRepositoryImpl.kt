@@ -10,9 +10,9 @@ class HistoryRepositoryImpl(val sharedPreferences: SharedPreferences): HistoryRe
         const val LAST_VIEW_KEY = "last_view_key"
     }
 
-    override fun getAllTrack(): Array<Track> {
-        val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyArray()
-        return Gson().fromJson(json, Array<Track>::class.java)
+    override fun getAllTrack(): List<Track> {
+        val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyList()
+        return Gson().fromJson(json, Array<Track>::class.java).toList()
     }
 
     override fun addTrack(track: Track) {

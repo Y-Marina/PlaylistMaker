@@ -7,10 +7,14 @@ import com.hfad.playlistmaker.data.MusicRepositoryImpl
 import com.hfad.playlistmaker.data.history.HistoryRepository
 import com.hfad.playlistmaker.data.network.RetrofitNetworkClient
 import com.hfad.playlistmaker.data.settings.SettingsRepository
+import com.hfad.playlistmaker.domian.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.api.MusicRepository
+import com.hfad.playlistmaker.domian.api.SettingsInteractor
+import com.hfad.playlistmaker.domian.impl.HistoryInteractorImpl
 import com.hfad.playlistmaker.domian.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.impl.MusicInteractorImpl
+import com.hfad.playlistmaker.domian.impl.SettingsInteractorImpl
 import com.hfad.playlistmaker.domian.impl.SettingsRepositoryImpl
 
 const val PREFERENCES = "preferences"
@@ -28,11 +32,19 @@ object Creator {
         return context.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
     }
 
-    fun provideHistoryRepository(context: Context): HistoryRepository {
+    private fun getHistoryRepository(context: Context): HistoryRepository {
         return HistoryRepositoryImpl(getSharedPreferences(context))
     }
 
-    fun provideSettingsRepository(context: Context): SettingsRepository {
+    private fun getSettingsRepository(context: Context): SettingsRepository {
         return SettingsRepositoryImpl(getSharedPreferences(context))
+    }
+
+    fun provideHistoryInteractor(context: Context): HistoryInteractor {
+        return HistoryInteractorImpl(getHistoryRepository(context))
+    }
+
+    fun provideSettingsInteractor(context: Context): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository(context))
     }
 }
