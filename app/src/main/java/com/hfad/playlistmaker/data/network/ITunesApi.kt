@@ -1,5 +1,6 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.data.network
 
+import com.hfad.playlistmaker.data.dto.MusicResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

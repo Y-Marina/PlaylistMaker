@@ -1,7 +1,6 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.ui.main
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -10,10 +9,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.card.MaterialCardView
+import com.hfad.playlistmaker.Creator
+import com.hfad.playlistmaker.R
+import com.hfad.playlistmaker.ui.playlist.MediaActivity
+import com.hfad.playlistmaker.ui.search.SearchActivity
+import com.hfad.playlistmaker.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var sharedPrefs: SharedPreferences
+    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +33,12 @@ class MainActivity : AppCompatActivity() {
         val mediaCard = findViewById<MaterialCardView>(R.id.media_card)
         val settingsCard = findViewById<MaterialCardView>(R.id.settings_card)
 
-        sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        if (!sharedPrefs.contains(THEME_KEY)) {
+        if (settingsInteractor.hasSavedTheme()) {
             val isNightMode = (resources.configuration.uiMode
                     and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            sharedPrefs.edit().putBoolean(THEME_KEY, isNightMode).apply()
+            settingsInteractor.saveTheme(isNightMode)
         } else {
-            val theme = sharedPrefs.getBoolean(THEME_KEY, false)
+            val theme = settingsInteractor.getTheme()
             if (theme) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {
