@@ -13,11 +13,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.creator.Creator
+import com.hfad.playlistmaker.creator.PREFERENCES
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.search.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.models.Track
-import com.hfad.playlistmaker.ui.settings.PREFERENCES
 
 data class SearchUiState(
     val isLoading: Boolean = false,
