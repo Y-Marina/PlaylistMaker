@@ -10,7 +10,7 @@ class SettingsRepositoryImpl(val sharedPreferences: SharedPreferences) : Setting
     }
 
     override fun hasSavedTheme(): Boolean {
-        return !sharedPreferences.contains(THEME_KEY)
+        return sharedPreferences.contains(THEME_KEY)
     }
 
     override fun saveTheme(isNight: Boolean) {

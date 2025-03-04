@@ -14,7 +14,7 @@ import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.creator.Creator
 
 data class SettingsUiState(
-    val isNightMode: Boolean
+    val isNightMode: Boolean = false
 )
 sealed class SettingsCommand {
     data object NavigateToShare : SettingsCommand()
@@ -34,8 +34,7 @@ class SettingsViewModel(application: Application): AndroidViewModel(application)
     private val settingsInteractor by lazy { Creator.provideSettingsInteractor(application) }
 
     private val stateLiveData = MutableLiveData(
-        SettingsUiState((application.resources.configuration.uiMode
-                and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
+        SettingsUiState(settingsInteractor.getTheme())
     )
     fun observeState(): LiveData<SettingsUiState> = stateLiveData
 

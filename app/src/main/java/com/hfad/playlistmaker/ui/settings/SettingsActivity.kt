@@ -3,6 +3,7 @@ package com.hfad.playlistmaker.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.CompoundButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,6 +17,8 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
 
     private lateinit var viewModel: SettingsViewModel
+
+    private lateinit var themeSwitchListener: CompoundButton.OnCheckedChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +47,11 @@ class SettingsActivity : AppCompatActivity() {
         viewModel.observeState().observe(this) { handleUiState(it) }
         viewModel.observeCommand().observe(this) { handleCommand(it) }
 
-        binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
+        themeSwitchListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
             viewModel.onChangeTheme(isNight = isChecked)
         }
+
+        binding.switchTheme.setOnCheckedChangeListener(themeSwitchListener)
 
         binding.shareTv.setOnClickListener {
             viewModel.onShareClick()
@@ -62,11 +67,16 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun handleUiState(state: SettingsUiState) {
-        binding.switchTheme.isChecked = state.isNightMode
+        println("myTag n = $state")
+        with(binding.switchTheme) {
+            setOnCheckedChangeListener(null)
+            isChecked = state.isNightMode
+            setOnCheckedChangeListener(themeSwitchListener)
+        }
     }
 
     private fun handleCommand(command: SettingsCommand) {
-        when(command) {
+        when (command) {
             is SettingsCommand.NavigateToShare -> share()
             is SettingsCommand.NavigateToSupport -> support()
             is SettingsCommand.NavigateToAgreement -> agreement()
