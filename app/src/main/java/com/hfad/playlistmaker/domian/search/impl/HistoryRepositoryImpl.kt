@@ -1,8 +1,8 @@
-package com.hfad.playlistmaker.domian.impl
+package com.hfad.playlistmaker.domian.search.impl
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.hfad.playlistmaker.data.history.HistoryRepository
+import com.hfad.playlistmaker.data.search.history.HistoryRepository
 import com.hfad.playlistmaker.domian.models.Track
 
 class HistoryRepositoryImpl(val sharedPreferences: SharedPreferences): HistoryRepository {

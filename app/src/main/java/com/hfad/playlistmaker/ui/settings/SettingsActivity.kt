@@ -12,7 +12,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
-import com.hfad.playlistmaker.Creator
+import com.hfad.playlistmaker.creator.Creator
 import com.hfad.playlistmaker.R
 
 const val PREFERENCES = "preferences"

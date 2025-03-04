@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.card.MaterialCardView
-import com.hfad.playlistmaker.Creator
+import com.hfad.playlistmaker.creator.Creator
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.ui.playlist.MediaActivity
 import com.hfad.playlistmaker.ui.search.SearchActivity
