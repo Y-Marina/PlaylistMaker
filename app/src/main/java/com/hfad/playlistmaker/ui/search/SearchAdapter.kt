@@ -1,37 +1,32 @@
 package com.hfad.playlistmaker.ui.search
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
-import com.hfad.playlistmaker.databinding.ActivitySearchBinding
 import com.hfad.playlistmaker.databinding.TrackListButtonBinding
 import com.hfad.playlistmaker.databinding.TrackListHeadBinding
 import com.hfad.playlistmaker.databinding.TrackListItemBinding
-import com.hfad.playlistmaker.domian.models.Track
 
 class SearchAdapter(val callback: Callback) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface Callback {
-        fun onItemClick(item: SearchItemViewModel.Item)
+        fun onItemClick(item: SearchItemUiModel.Item)
         fun onClearHistoryClick()
     }
 
-    var data: List<SearchItemViewModel> = emptyList()
+    var data: List<SearchItemUiModel> = emptyList()
 
     override fun getItemViewType(position: Int): Int {
         val item = data[position]
         return when (item) {
-            is SearchItemViewModel.Header -> R.layout.track_list_head
-            is SearchItemViewModel.Item -> R.layout.track_list_item
-            is SearchItemViewModel.Button -> R.layout.track_list_button
+            is SearchItemUiModel.Header -> R.layout.track_list_head
+            is SearchItemUiModel.Item -> R.layout.track_list_item
+            is SearchItemUiModel.Button -> R.layout.track_list_button
         }
     }
 
@@ -60,9 +55,9 @@ class SearchAdapter(val callback: Callback) :
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = data[position]) {
-            is SearchItemViewModel.Header -> Unit
-            is SearchItemViewModel.Item -> (holder as TrackItemViewHolder).bind(item)
-            is SearchItemViewModel.Button -> Unit
+            is SearchItemUiModel.Header -> Unit
+            is SearchItemUiModel.Item -> (holder as TrackItemViewHolder).bind(item)
+            is SearchItemUiModel.Button -> Unit
         }
     }
 
@@ -75,7 +70,7 @@ class SearchAdapter(val callback: Callback) :
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val item = data[position] as? SearchItemViewModel.Item
+                    val item = data[position] as? SearchItemUiModel.Item
                     if (item != null) {
                         callback.onItemClick(item)
                     }
@@ -83,7 +78,7 @@ class SearchAdapter(val callback: Callback) :
             }
         }
 
-        fun bind(item: SearchItemViewModel.Item) = with(binding) {
+        fun bind(item: SearchItemUiModel.Item) = with(binding) {
             trackNameTv.text = item.track.trackName
             artistNameTv.text = item.track.artistName
             trackTimeTv.text = item.track.getTime()

@@ -1,7 +1,6 @@
 package com.hfad.playlistmaker.ui.settings
 
 import android.app.Application
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData

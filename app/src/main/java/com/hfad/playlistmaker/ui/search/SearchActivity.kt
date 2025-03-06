@@ -87,6 +87,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun handleUiState(state: SearchUiState) {
+        println("MyTag $state items = ${state.items}")
         binding.progressBar.isVisible = state.isLoading
         binding.emptyMessage.root.isVisible = state.isEmptyResult
         binding.noInternetMessage.root.isVisible = state.isError

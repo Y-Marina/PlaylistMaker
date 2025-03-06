@@ -1,6 +1,7 @@
 package com.hfad.playlistmaker.ui.search
 
 import android.app.Application
+import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
@@ -36,14 +37,14 @@ data class SearchUiState(
 
     val items = buildList {
         if (findTracks.isNotEmpty()) {
-            addAll(findTracks.map { SearchItemViewModel.Item(it) })
+            addAll(findTracks.map { SearchItemUiModel.Item(it) })
         } else {
             if (historyTracks.isNotEmpty() && searchText.isEmpty()) {
-                add(SearchItemViewModel.Header)
-                addAll(historyTracks.map { SearchItemViewModel.Item(it) })
-                add(SearchItemViewModel.Button)
+                add(SearchItemUiModel.Header)
+                addAll(historyTracks.map { SearchItemUiModel.Item(it) })
+                add(SearchItemUiModel.Button)
             } else {
-                emptyList<SearchItemViewModel>()
+                emptyList<SearchItemUiModel>()
             }
         }
     }
@@ -67,7 +68,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    val sharedPreferences = application.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = application.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
 
     private val historyInteractor: HistoryInteractor by lazy {
         Creator.provideHistoryInteractor(
@@ -85,14 +86,19 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
     private val searchRunnable = Runnable { search() }
 
     private val stateLiveData = MutableLiveData(SearchUiState())
-    fun observeState(): LiveData<SearchUiState> = stateLiveData
+    fun observeState(): LiveData<SearchUiState> {
+        println("MyTag create")
+        return stateLiveData
+    }
 
     private val commandLiveData = SingleLiveEvent<SearchCommand>()
     fun observeCommand(): LiveData<SearchCommand> = commandLiveData
 
     init {
+        println("MyTag init")
         historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
             override fun consume(trackList: List<Track>) {
+                println("MyTag historyInteractor $trackList, value = ${stateLiveData.value == null}")
                 stateLiveData.postValue(stateLiveData.value?.copy(historyTracks = trackList))
             }
         })
@@ -101,6 +107,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
             if (key == HistoryRepositoryImpl.LAST_VIEW_KEY) {
                 historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
                     override fun consume(trackList: List<Track>) {
+                        println("MyTag sharedPreferences $trackList")
                         stateLiveData.postValue(stateLiveData.value?.copy(historyTracks = trackList))
                     }
                 })
@@ -159,11 +166,11 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
             )
 
             musicInteractor.searchTracks(latestSearchText, object : MusicInteractor.TracksConsumer {
-                override fun onSuccess(findTracks: List<Track>) {
+                override fun onSuccess(tracks: List<Track>) {
                     stateLiveData.postValue(
                         stateLiveData.value?.copy(
                             isLoading = false,
-                            findTracks = findTracks,
+                            findTracks = tracks,
                             isError = false
                         )
                     )
@@ -181,7 +188,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    override fun onItemClick(item: SearchItemViewModel.Item) {
+    override fun onItemClick(item: SearchItemUiModel.Item) {
         clickDebounce()
         historyInteractor.addTrack(item.track)
         commandLiveData.postValue(SearchCommand.NavigateToPlayer(track = item.track))
