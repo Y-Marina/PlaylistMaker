@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker.domian.impl
+package com.hfad.playlistmaker.domian.settings.impl
 
 import android.content.SharedPreferences
 import com.hfad.playlistmaker.data.settings.SettingsRepository
@@ -10,7 +10,7 @@ class SettingsRepositoryImpl(val sharedPreferences: SharedPreferences) : Setting
     }
 
     override fun hasSavedTheme(): Boolean {
-        return !sharedPreferences.contains(THEME_KEY)
+        return sharedPreferences.contains(THEME_KEY)
     }
 
     override fun saveTheme(isNight: Boolean) {

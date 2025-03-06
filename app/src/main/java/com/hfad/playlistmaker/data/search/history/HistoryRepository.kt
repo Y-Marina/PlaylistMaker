@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker.data.history
+package com.hfad.playlistmaker.data.search.history
 
 import com.hfad.playlistmaker.domian.models.Track
 

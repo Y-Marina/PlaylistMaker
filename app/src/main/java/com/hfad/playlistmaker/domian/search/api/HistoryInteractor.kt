@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker.domian.api
+package com.hfad.playlistmaker.domian.search.api
 
 import com.hfad.playlistmaker.domian.models.Track
 

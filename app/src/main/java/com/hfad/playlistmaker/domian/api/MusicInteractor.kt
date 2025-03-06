@@ -6,7 +6,7 @@ interface MusicInteractor {
     fun searchTracks(exception: String, consumer: TracksConsumer)
 
     interface TracksConsumer {
-        fun onSuccess(foundTracks: List<Track>)
+        fun onSuccess(tracks: List<Track>)
 
         fun onFailure(exception: Exception)
     }

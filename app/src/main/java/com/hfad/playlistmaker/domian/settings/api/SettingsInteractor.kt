@@ -1,4 +1,4 @@
-package com.hfad.playlistmaker.domian.api
+package com.hfad.playlistmaker.domian.settings.api
 
 interface SettingsInteractor {
     fun hasSavedTheme(): Boolean
