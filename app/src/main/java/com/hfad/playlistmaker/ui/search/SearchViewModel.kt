@@ -1,24 +1,20 @@
 package com.hfad.playlistmaker.ui.search
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
-import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.creator.Creator
-import com.hfad.playlistmaker.creator.PREFERENCES
-import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.api.MusicInteractor
-import com.hfad.playlistmaker.domian.search.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 
 data class SearchUiState(
     val isLoading: Boolean = false,
@@ -68,8 +64,6 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    private val sharedPreferences: SharedPreferences = application.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-
     private val historyInteractor: HistoryInteractor by lazy {
         Creator.provideHistoryInteractor(
             application
@@ -85,9 +79,13 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
 
     private val searchRunnable = Runnable { search() }
 
-    private val stateLiveData = MutableLiveData(SearchUiState())
+    private val stateLiveData = MediatorLiveData(SearchUiState()).also { liveData ->
+        liveData.addSource(historyInteractor.observeHistoryState()) { historyState ->
+            liveData.postValue(liveData.value?.copy(historyTracks = historyState))
+        }
+    }
+
     fun observeState(): LiveData<SearchUiState> {
-        println("MyTag create")
         return stateLiveData
     }
 
@@ -95,24 +93,11 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
     fun observeCommand(): LiveData<SearchCommand> = commandLiveData
 
     init {
-        println("MyTag init")
         historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
             override fun consume(trackList: List<Track>) {
-                println("MyTag historyInteractor $trackList, value = ${stateLiveData.value == null}")
                 stateLiveData.postValue(stateLiveData.value?.copy(historyTracks = trackList))
             }
         })
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            if (key == HistoryRepositoryImpl.LAST_VIEW_KEY) {
-                historyInteractor.getAllTrack(object : HistoryInteractor.HistoryConsumer {
-                    override fun consume(trackList: List<Track>) {
-                        println("MyTag sharedPreferences $trackList")
-                        stateLiveData.postValue(stateLiveData.value?.copy(historyTracks = trackList))
-                    }
-                })
-            }
-        }
     }
 
     fun searchDebounce(changedText: String) {

@@ -1,12 +1,13 @@
 package com.hfad.playlistmaker.domian.search.impl
 
+import androidx.lifecycle.LiveData
 import com.hfad.playlistmaker.data.search.history.HistoryRepository
 import com.hfad.playlistmaker.data.storage.LocalStorage
 import com.hfad.playlistmaker.domian.models.Track
 
 class HistoryRepositoryImpl(private val localStorage: LocalStorage): HistoryRepository {
-    companion object {
-        const val LAST_VIEW_KEY = "last_view_key"
+    override fun observeHistoryState(): LiveData<List<Track>> {
+        return localStorage.observeHistoryState()
     }
 
     override fun getAllTrack(): List<Track> {

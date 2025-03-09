@@ -2,13 +2,32 @@ package com.hfad.playlistmaker.data
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfad.playlistmaker.data.storage.LocalStorage
 import com.hfad.playlistmaker.domian.models.Track
-import com.hfad.playlistmaker.domian.search.impl.HistoryRepositoryImpl.Companion.LAST_VIEW_KEY
 import com.hfad.playlistmaker.domian.settings.impl.SettingsRepositoryImpl.Companion.THEME_KEY
 
 class LocalStorageImpl(val sharedPreferences: SharedPreferences) : LocalStorage {
+    companion object {
+        const val LAST_VIEW_KEY = "last_view_key"
+    }
+
+    private val historyState = MutableLiveData<List<Track>>()
+    override fun observeHistoryState(): LiveData<List<Track>> {
+        return historyState
+    }
+
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (key == LAST_VIEW_KEY) {
+                historyState.postValue(getAllLocalTrack())
+            }
+        }
+    }
+
+
     override fun getAllLocalTrack(): List<Track> {
         val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyList()
         return Gson().fromJson(json, Array<Track>::class.java).toList()
