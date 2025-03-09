@@ -15,7 +15,6 @@ class MusicInteractorImpl(private val repository: MusicRepository) : MusicIntera
             } catch (exception: Exception) {
                 consumer.onFailure(exception)
             }
-
         }
     }
 }

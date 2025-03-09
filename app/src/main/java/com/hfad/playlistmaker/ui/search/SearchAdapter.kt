@@ -8,6 +8,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
+import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.TrackListButtonBinding
 import com.hfad.playlistmaker.databinding.TrackListHeadBinding
 import com.hfad.playlistmaker.databinding.TrackListItemBinding
@@ -81,7 +82,7 @@ class SearchAdapter(val callback: Callback) :
         fun bind(item: SearchItemUiModel.Item) = with(binding) {
             trackNameTv.text = item.track.trackName
             artistNameTv.text = item.track.artistName
-            trackTimeTv.text = item.track.getTime()
+            trackTimeTv.text = item.track.trackTime.toTime()
             Glide
                 .with(context)
                 .load(item.track.artworkUrl100)

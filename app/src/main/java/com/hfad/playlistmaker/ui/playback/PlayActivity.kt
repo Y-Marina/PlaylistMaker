@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
+import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.ActivityPlayBinding
 import com.hfad.playlistmaker.domian.models.Track
 import java.text.SimpleDateFormat
@@ -74,7 +75,7 @@ class PlayActivity : AppCompatActivity() {
             binding.playBt.isEnabled = state.isPlayButtonEnabled
             binding.trackNameTv.text = state.track.trackName
             binding.artistNameTv.text = state.track.artistName
-            binding.durationTimeTv.text = state.track.getTime()
+            binding.durationTimeTv.text = state.track.trackTime.toTime()
 
             setPlayTime(state.currentTime)
 

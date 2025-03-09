@@ -1,23 +1,23 @@
 package com.hfad.playlistmaker.domian.settings.impl
 
-import android.content.SharedPreferences
 import com.hfad.playlistmaker.data.settings.SettingsRepository
+import com.hfad.playlistmaker.data.storage.LocalStorage
 
-class SettingsRepositoryImpl(val sharedPreferences: SharedPreferences) : SettingsRepository {
+class SettingsRepositoryImpl(private val localStorage: LocalStorage) : SettingsRepository {
 
     companion object{
         const val THEME_KEY = "key_for_theme"
     }
 
     override fun hasSavedTheme(): Boolean {
-        return sharedPreferences.contains(THEME_KEY)
+        return localStorage.hasSavedTheme()
     }
 
     override fun saveTheme(isNight: Boolean) {
-        sharedPreferences.edit().putBoolean(THEME_KEY, isNight).apply()
+        localStorage.saveTheme(isNight)
     }
 
     override fun getTheme(): Boolean {
-        return sharedPreferences.getBoolean(THEME_KEY, false)
+        return localStorage.getTheme()
     }
 }
