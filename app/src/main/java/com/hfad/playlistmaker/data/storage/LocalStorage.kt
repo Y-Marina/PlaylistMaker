@@ -8,6 +8,8 @@ interface LocalStorage {
 
     fun getAllLocalTrack(): List<Track>
 
+    fun getTrackById(trackId: Long): Track?
+
     fun addTrack(track: Track)
 
     fun clear()

@@ -8,6 +8,8 @@ interface HistoryRepository {
 
     fun getAllTrack(): List<Track>
 
+    fun getTrackById(trackId: Long): Track?
+
     fun addTrack(track: Track)
 
     fun clear()

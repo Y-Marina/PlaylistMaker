@@ -8,6 +8,8 @@ interface HistoryInteractor {
 
     fun getAllTrack(consumer: HistoryConsumer)
 
+    fun getTrackById(trackId: Long): Track?
+
     fun addTrack(track: Track)
 
     fun clear()

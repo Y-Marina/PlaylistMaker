@@ -100,7 +100,7 @@ class SearchActivity : AppCompatActivity() {
         when (command) {
             is SearchCommand.NavigateToPlayer -> {
                 val playIntent = Intent(this, PlayActivity::class.java)
-                playIntent.putExtra(TRACK_ITEM, command.track)
+                playIntent.putExtra(TRACK_ITEM, command.trackId)
                 startActivity(playIntent)
             }
         }

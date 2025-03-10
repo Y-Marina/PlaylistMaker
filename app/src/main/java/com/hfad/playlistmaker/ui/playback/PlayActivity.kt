@@ -50,8 +50,8 @@ class PlayActivity : AppCompatActivity() {
             PlayViewModel.getViewModelFactory()
         )[PlayViewModel::class.java]
 
-        val track = intent.getParcelableExtra<Track>(TRACK_ITEM)
-        viewModel.setTrack(track)
+        val trackId = intent.getLongExtra(TRACK_ITEM, -1L)
+        viewModel.setTrack(trackId)
 
         viewModel.observeState().observe(this) { handleUiState(it) }
         viewModel.observeCommand().observe(this) { handleCommand(it) }

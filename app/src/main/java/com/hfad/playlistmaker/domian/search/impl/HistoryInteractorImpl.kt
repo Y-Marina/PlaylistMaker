@@ -14,6 +14,10 @@ class HistoryInteractorImpl(val historyRepository: HistoryRepository) : HistoryI
         consumer.consume(historyRepository.getAllTrack())
     }
 
+    override fun getTrackById(trackId: Long): Track? {
+        return historyRepository.getTrackById(trackId)
+    }
+
     override fun addTrack(track: Track) {
         historyRepository.addTrack(track)
     }

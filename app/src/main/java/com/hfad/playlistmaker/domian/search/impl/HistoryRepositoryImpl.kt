@@ -14,6 +14,10 @@ class HistoryRepositoryImpl(private val localStorage: LocalStorage): HistoryRepo
         return localStorage.getAllLocalTrack()
     }
 
+    override fun getTrackById(trackId: Long): Track? {
+        return localStorage.getTrackById(trackId)
+    }
+
     override fun addTrack(track: Track) {
         localStorage.addTrack(track)
     }

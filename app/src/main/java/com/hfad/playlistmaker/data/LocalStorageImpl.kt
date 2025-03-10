@@ -33,6 +33,10 @@ class LocalStorageImpl(val sharedPreferences: SharedPreferences) : LocalStorage 
         return Gson().fromJson(json, Array<Track>::class.java).toList()
     }
 
+    override fun getTrackById(trackId: Long): Track? {
+        return getAllLocalTrack().firstOrNull { it.trackId == trackId }
+    }
+
     override fun addTrack(track: Track) {
         val tracks = getAllLocalTrack()
         val newTracks = tracks.filterNot { it.trackId == track.trackId }.take(9).toMutableList()

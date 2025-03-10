@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hfad.playlistmaker.common.SingleLiveEvent
+import com.hfad.playlistmaker.creator.Creator
 import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 
 data class PlayUiState(
     val track: Track? = null,
@@ -24,14 +26,16 @@ sealed class PlayCommand {
     data object NavigateBack : PlayCommand()
 }
 
+enum class PlayState{
+    STATE_DEFAULT,
+    STATE_PREPARED,
+    STATE_PLAYING,
+    STATE_PAUSED
+}
+
 class PlayViewModel(application: Application): AndroidViewModel(application) {
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
         private const val TIMER_DEBOUNCE = 1000L
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
@@ -41,9 +45,15 @@ class PlayViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    private val historyInteractor: HistoryInteractor by lazy {
+        Creator.provideHistoryInteractor(
+            application
+        )
+    }
+
     private val handler = Handler(Looper.getMainLooper())
 
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayState.STATE_DEFAULT
 
     private val mediaPlayer = MediaPlayer()
 
@@ -66,15 +76,15 @@ class PlayViewModel(application: Application): AndroidViewModel(application) {
 
     fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
+            PlayState.STATE_PLAYING -> {
                 pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            PlayState.STATE_PREPARED, PlayState.STATE_PAUSED -> {
                 startPlayer()
             }
 
-            STATE_DEFAULT -> {
+            PlayState.STATE_DEFAULT -> {
                 Unit
             }
         }
@@ -85,10 +95,10 @@ class PlayViewModel(application: Application): AndroidViewModel(application) {
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             stateLiveData.postValue(stateLiveData.value?.copy(isPlayButtonEnabled = true))
-            playerState = STATE_PREPARED
+            playerState = PlayState.STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
+            playerState = PlayState.STATE_PREPARED
             handler.removeCallbacks(playTimeRunnable)
             stateLiveData.postValue(stateLiveData.value?.copy(currentTime = 0))
         }
@@ -96,18 +106,23 @@ class PlayViewModel(application: Application): AndroidViewModel(application) {
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerState = PlayState.STATE_PLAYING
         handler.postDelayed(playTimeRunnable, TIMER_DEBOUNCE)
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerState = PlayState.STATE_PAUSED
         handler.removeCallbacks(playTimeRunnable)
     }
 
-    fun setTrack(track: Track?) {
-        if (playerState == STATE_DEFAULT) {
+    fun setTrack(trackId: Long) {
+        val track = if (trackId == -1L) {
+            null
+        } else {
+            historyInteractor.getTrackById(trackId = trackId)
+        }
+        if (playerState == PlayState.STATE_DEFAULT) {
             if (track == null) {
                 commandLiveData.postValue(PlayCommand.NavigateBack)
             } else {
