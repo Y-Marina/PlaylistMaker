@@ -1,18 +1,12 @@
 package com.hfad.playlistmaker.ui.playback
 
-import android.app.Application
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.hfad.playlistmaker.common.SingleLiveEvent
-import com.hfad.playlistmaker.creator.Creator
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 
@@ -33,22 +27,11 @@ enum class PlayState{
     STATE_PAUSED
 }
 
-class PlayViewModel(application: Application): AndroidViewModel(application) {
-
+class PlayViewModel(
+    private val historyInteractor: HistoryInteractor
+): ViewModel() {
     companion object {
         private const val TIMER_DEBOUNCE = 1000L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val historyInteractor: HistoryInteractor by lazy {
-        Creator.provideHistoryInteractor(
-            application
-        )
     }
 
     private val handler = Handler(Looper.getMainLooper())

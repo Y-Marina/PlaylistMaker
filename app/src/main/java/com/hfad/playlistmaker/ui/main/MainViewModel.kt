@@ -5,12 +5,8 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hfad.playlistmaker.common.SingleLiveEvent
-import com.hfad.playlistmaker.creator.Creator
+import com.hfad.playlistmaker.domian.settings.api.SettingsInteractor
 
 sealed class MainCommand {
     data object NavigationToSearch: MainCommand()
@@ -18,18 +14,10 @@ sealed class MainCommand {
     data object NavigationToSettings: MainCommand()
 }
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MainViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(application) }
-
+class MainViewModel(
+    application: Application,
+    settingsInteractor: SettingsInteractor
+) : AndroidViewModel(application) {
     init {
         if (settingsInteractor.hasSavedTheme()) {
             val theme = settingsInteractor.getTheme()
