@@ -1,21 +1,23 @@
-package com.hfad.playlistmaker
+package com.hfad.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import com.hfad.playlistmaker.data.LocalStorageImpl
 import com.hfad.playlistmaker.data.MusicRepositoryImpl
-import com.hfad.playlistmaker.data.history.HistoryRepository
+import com.hfad.playlistmaker.data.search.history.HistoryRepository
 import com.hfad.playlistmaker.data.network.RetrofitNetworkClient
 import com.hfad.playlistmaker.data.settings.SettingsRepository
-import com.hfad.playlistmaker.domian.api.HistoryInteractor
+import com.hfad.playlistmaker.data.storage.LocalStorage
+import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.api.MusicRepository
-import com.hfad.playlistmaker.domian.api.SettingsInteractor
-import com.hfad.playlistmaker.domian.impl.HistoryInteractorImpl
-import com.hfad.playlistmaker.domian.impl.HistoryRepositoryImpl
+import com.hfad.playlistmaker.domian.settings.api.SettingsInteractor
+import com.hfad.playlistmaker.domian.search.impl.HistoryInteractorImpl
+import com.hfad.playlistmaker.domian.search.impl.HistoryRepositoryImpl
 import com.hfad.playlistmaker.domian.impl.MusicInteractorImpl
-import com.hfad.playlistmaker.domian.impl.SettingsInteractorImpl
-import com.hfad.playlistmaker.domian.impl.SettingsRepositoryImpl
+import com.hfad.playlistmaker.domian.settings.impl.SettingsInteractorImpl
+import com.hfad.playlistmaker.domian.settings.impl.SettingsRepositoryImpl
 
 const val PREFERENCES = "preferences"
 
@@ -32,12 +34,16 @@ object Creator {
         return context.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
     }
 
+    private fun getLocalStorage(context: Context): LocalStorage {
+        return LocalStorageImpl(getSharedPreferences(context))
+    }
+
     private fun getHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(getSharedPreferences(context))
+        return HistoryRepositoryImpl(getLocalStorage(context))
     }
 
     private fun getSettingsRepository(context: Context): SettingsRepository {
-        return SettingsRepositoryImpl(getSharedPreferences(context))
+        return SettingsRepositoryImpl(getLocalStorage(context))
     }
 
     fun provideHistoryInteractor(context: Context): HistoryInteractor {

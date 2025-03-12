@@ -171,15 +171,15 @@
                 android:layout_marginEnd="16dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/ys_display_regular"
+                android:gravity="end"
                 android:maxLines="1"
                 android:paddingVertical="8dp"
                 android:textColor="@color/ic_color"
                 android:textSize="16sp"
+                app:layout_constrainedWidth="false"
                 app:layout_constraintBaseline_toBaselineOf="@id/album_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/album_tv"
-                app:layout_constraintWidth="wrap_content"
                 tools:text="Yesterday (Remastered 2009)" />
 
             <TextView

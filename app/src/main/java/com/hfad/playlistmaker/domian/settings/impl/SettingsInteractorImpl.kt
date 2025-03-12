@@ -1,8 +1,7 @@
-package com.hfad.playlistmaker.domian.impl
+package com.hfad.playlistmaker.domian.settings.impl
 
-import android.content.SharedPreferences
 import com.hfad.playlistmaker.data.settings.SettingsRepository
-import com.hfad.playlistmaker.domian.api.SettingsInteractor
+import com.hfad.playlistmaker.domian.settings.api.SettingsInteractor
 
 class SettingsInteractorImpl(val settingsRepository: SettingsRepository): SettingsInteractor {
     override fun hasSavedTheme(): Boolean {

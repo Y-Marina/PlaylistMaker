@@ -1,9 +1,14 @@
-package com.hfad.playlistmaker.domian.api
+package com.hfad.playlistmaker.domian.search.api
 
+import androidx.lifecycle.LiveData
 import com.hfad.playlistmaker.domian.models.Track
 
 interface HistoryInteractor {
+    fun observeHistoryState(): LiveData<List<Track>>
+
     fun getAllTrack(consumer: HistoryConsumer)
+
+    fun getTrackById(trackId: Long): Track?
 
     fun addTrack(track: Track)
 
