@@ -2,6 +2,7 @@ package com.hfad.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import com.google.gson.Gson
 import com.hfad.playlistmaker.data.LocalStorageImpl
 import com.hfad.playlistmaker.data.NetworkClient
@@ -33,6 +34,10 @@ val dataModule = module {
     }
 
     single<LocalStorage> {
-        LocalStorageImpl(get())
+        LocalStorageImpl(get(), get())
+    }
+
+    single {
+        MediaPlayer()
     }
 }

@@ -9,7 +9,10 @@ import com.hfad.playlistmaker.data.storage.LocalStorage
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.settings.impl.SettingsRepositoryImpl.Companion.THEME_KEY
 
-class LocalStorageImpl(val sharedPreferences: SharedPreferences) : LocalStorage {
+class LocalStorageImpl(
+    val sharedPreferences: SharedPreferences,
+    val gson: Gson
+) : LocalStorage {
     companion object {
         const val LAST_VIEW_KEY = "last_view_key"
     }
@@ -30,7 +33,7 @@ class LocalStorageImpl(val sharedPreferences: SharedPreferences) : LocalStorage 
 
     override fun getAllLocalTrack(): List<Track> {
         val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyList()
-        return Gson().fromJson(json, Array<Track>::class.java).toList()
+        return gson.fromJson(json, Array<Track>::class.java).toList()
     }
 
     override fun getTrackById(trackId: Long): Track? {
@@ -49,7 +52,7 @@ class LocalStorageImpl(val sharedPreferences: SharedPreferences) : LocalStorage 
     }
 
     private fun saveTracks(tracks: List<Track>) {
-        val json = Gson().toJson(tracks)
+        val json = gson.toJson(tracks)
         sharedPreferences.edit {
             putString(LAST_VIEW_KEY, json)
         }

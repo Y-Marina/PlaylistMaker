@@ -28,7 +28,8 @@ enum class PlayState{
 }
 
 class PlayViewModel(
-    private val historyInteractor: HistoryInteractor
+    private val historyInteractor: HistoryInteractor,
+    private val mediaPlayer: MediaPlayer
 ): ViewModel() {
     companion object {
         private const val TIMER_DEBOUNCE = 1000L
@@ -37,8 +38,6 @@ class PlayViewModel(
     private val handler = Handler(Looper.getMainLooper())
 
     private var playerState = PlayState.STATE_DEFAULT
-
-    private val mediaPlayer = MediaPlayer()
 
     private val playTimeRunnable = object : Runnable {
         var currentTime = 0

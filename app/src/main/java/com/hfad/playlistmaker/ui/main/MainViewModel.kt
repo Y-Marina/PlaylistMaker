@@ -1,35 +1,26 @@
 package com.hfad.playlistmaker.ui.main
 
-import android.app.Application
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.settings.api.SettingsInteractor
 
 sealed class MainCommand {
-    data object NavigationToSearch: MainCommand()
-    data object NavigationToMedia: MainCommand()
-    data object NavigationToSettings: MainCommand()
+    data object NavigationToSearch : MainCommand()
+    data object NavigationToMedia : MainCommand()
+    data object NavigationToSettings : MainCommand()
 }
 
 class MainViewModel(
-    application: Application,
     settingsInteractor: SettingsInteractor
-) : AndroidViewModel(application) {
+) : ViewModel() {
     init {
-        if (settingsInteractor.hasSavedTheme()) {
-            val theme = settingsInteractor.getTheme()
-            if (theme) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+        val isNightMode = settingsInteractor.getTheme()
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            val isNightMode = (application.resources.configuration.uiMode
-                    and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            settingsInteractor.saveTheme(isNightMode)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 
