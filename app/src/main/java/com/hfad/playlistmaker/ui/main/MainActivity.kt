@@ -6,18 +6,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.ActivityMainBinding
 import com.hfad.playlistmaker.ui.playlist.MediaActivity
 import com.hfad.playlistmaker.ui.search.SearchActivity
 import com.hfad.playlistmaker.ui.settings.SettingsActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +31,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            MainViewModel.getViewModelFactory()
-        )[MainViewModel::class.java]
 
         viewModel.observeCommand().observe(this) { handleCommand(it) }
 

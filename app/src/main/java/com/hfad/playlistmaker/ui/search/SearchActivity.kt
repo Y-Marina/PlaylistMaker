@@ -10,18 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.ActivitySearchBinding
 import com.hfad.playlistmaker.ui.playback.PlayActivity
 import com.hfad.playlistmaker.ui.playback.TRACK_ITEM
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
 
     private lateinit var adapter: SearchAdapter
 
@@ -37,11 +37,6 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) { handleUiState(it) }
         viewModel.observeCommand().observe(this) { handleCommand(it) }

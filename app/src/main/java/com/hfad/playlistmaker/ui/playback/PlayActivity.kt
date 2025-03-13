@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -14,7 +13,7 @@ import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.ActivityPlayBinding
-import com.hfad.playlistmaker.domian.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,7 +23,7 @@ class PlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayBinding
 
-    private lateinit var viewModel: PlayViewModel
+    private val viewModel by viewModel<PlayViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +43,6 @@ class PlayActivity : AppCompatActivity() {
             it.setNavigationIconTint(getColor(R.color.ic_color))
             it.setNavigationOnClickListener { this.finish() }
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            PlayViewModel.getViewModelFactory()
-        )[PlayViewModel::class.java]
 
         val trackId = intent.getLongExtra(TRACK_ITEM, -1L)
         viewModel.setTrack(trackId)

@@ -1,7 +1,6 @@
 package com.hfad.playlistmaker.data.settings
 
 interface SettingsRepository {
-    fun hasSavedTheme(): Boolean
     fun saveTheme(isNight: Boolean)
 
     /**

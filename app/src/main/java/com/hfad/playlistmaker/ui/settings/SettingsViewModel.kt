@@ -1,16 +1,11 @@
 package com.hfad.playlistmaker.ui.settings
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.hfad.playlistmaker.common.SingleLiveEvent
-import com.hfad.playlistmaker.creator.Creator
+import com.hfad.playlistmaker.domian.settings.api.SettingsInteractor
 
 data class SettingsUiState(
     val isNightMode: Boolean = false
@@ -21,17 +16,9 @@ sealed class SettingsCommand {
     data object NavigateToAgreement : SettingsCommand()
 }
 
-class SettingsViewModel(application: Application): AndroidViewModel(application) {
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(application) }
-
+class SettingsViewModel(
+    private val settingsInteractor: SettingsInteractor
+): ViewModel() {
     private val stateLiveData = MutableLiveData(
         SettingsUiState(settingsInteractor.getTheme())
     )
