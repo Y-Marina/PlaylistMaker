@@ -1,17 +1,11 @@
 package com.hfad.playlistmaker.ui.search
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.hfad.playlistmaker.common.SingleLiveEvent
-import com.hfad.playlistmaker.creator.Creator
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
@@ -50,27 +44,17 @@ sealed class SearchCommand {
     data class NavigateToPlayer(val trackId: Long) : SearchCommand()
 }
 
-class SearchViewModel(application: Application) : AndroidViewModel(application),
+class SearchViewModel(
+    private val musicInteractor: MusicInteractor,
+    private val historyInteractor: HistoryInteractor
+) : ViewModel(),
     SearchAdapter.Callback {
 
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         const val CLICK_DEBOUNCE_DELAY = 1000L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 
-    private val historyInteractor: HistoryInteractor by lazy {
-        Creator.provideHistoryInteractor(
-            application
-        )
-    }
-
-    private val musicInteractor: MusicInteractor by lazy { Creator.provideMusicInteractor() }
     private val handler = Handler(Looper.getMainLooper())
 
     private var isClickAllowed = true
