@@ -9,6 +9,10 @@ import com.hfad.playlistmaker.databinding.FragmentMediaFavBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaFavFragment : Fragment() {
+    companion object {
+        fun newInstance() = MediaFavFragment()
+    }
+
     private lateinit var binding: FragmentMediaFavBinding
 
     private val mediaFavViewModel: MediaFavViewModel by viewModel()

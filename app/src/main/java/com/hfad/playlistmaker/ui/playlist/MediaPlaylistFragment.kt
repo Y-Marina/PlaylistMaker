@@ -9,6 +9,10 @@ import com.hfad.playlistmaker.databinding.FragmentMediaPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaPlaylistFragment : Fragment() {
+    companion object {
+        fun newInstance() = MediaPlaylistFragment()
+    }
+
     private lateinit var binding: FragmentMediaPlaylistBinding
 
     private val mediaPlaylistViewModel: MediaPlaylistViewModel by viewModel()

@@ -10,7 +10,7 @@ class MediaViewPagerAdapter(
     lifecycle: Lifecycle
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun createFragment(position: Int): Fragment {
-        return if (position == 0) MediaFavFragment() else MediaPlaylistFragment()
+        return if (position == 0) MediaFavFragment.newInstance() else MediaPlaylistFragment.newInstance()
     }
 
     override fun getItemCount(): Int {
