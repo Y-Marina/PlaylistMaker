@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_grap"
+    app:startDestination="@id/media_fragment">
+
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.hfad.playlistmaker.ui.search.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/media_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.MediaFragment"
+        android:label="MediaFragment"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.hfad.playlistmaker.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+
+        <action
+            android:id="@+id/action_settingsFragment_to_agreeFragment"
+            app:destination="@id/agree_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/agree_fragment"
+        android:name="com.hfad.playlistmaker.ui.settings.AgreeFragment"
+        android:label="AgreeFragment"
+        tools:layout="@layout/fragment_agree" />
+</navigation>
