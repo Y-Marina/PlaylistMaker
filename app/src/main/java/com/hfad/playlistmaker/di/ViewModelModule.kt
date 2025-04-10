@@ -1,5 +1,6 @@
 package com.hfad.playlistmaker.di
 
+import com.hfad.playlistmaker.ui.main.MainViewModel
 import com.hfad.playlistmaker.ui.playback.PlayViewModel
 import com.hfad.playlistmaker.ui.playlist.MediaFavViewModel
 import com.hfad.playlistmaker.ui.playlist.MediaPlaylistViewModel
@@ -9,6 +10,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
+    viewModel {
+        MainViewModel(get())
+    }
+
     viewModel {
         PlayViewModel(get(), get())
     }
