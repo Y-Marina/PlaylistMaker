@@ -4,52 +4,40 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import com.google.android.material.appbar.MaterialToolbar
-import com.hfad.playlistmaker.R
-import com.hfad.playlistmaker.databinding.ActivitySearchBinding
+import androidx.fragment.app.Fragment
+import com.hfad.playlistmaker.databinding.FragmentSearchBinding
 import com.hfad.playlistmaker.ui.playback.PlayActivity
 import com.hfad.playlistmaker.ui.playback.TRACK_ITEM
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+    private lateinit var binding: FragmentSearchBinding
 
     private val viewModel by viewModel<SearchViewModel>()
 
     private lateinit var adapter: SearchAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        viewModel.observeState().observe(this) { handleUiState(it) }
-        viewModel.observeCommand().observe(this) { handleCommand(it) }
+        viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
+        viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
         adapter = SearchAdapter(viewModel)
         binding.contentList.adapter = adapter
-
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar?.let {
-            it.setNavigationIcon(R.drawable.ic_arrow_back_24)
-            it.setNavigationIconTint(getColor(R.color.ic_color))
-            it.setNavigationOnClickListener { this.finish() }
-        }
 
         binding.searchEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -94,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
     private fun handleCommand(command: SearchCommand) {
         when (command) {
             is SearchCommand.NavigateToPlayer -> {
-                val playIntent = Intent(this, PlayActivity::class.java)
+                val playIntent = Intent(requireContext(), PlayActivity::class.java)
                 playIntent.putExtra(TRACK_ITEM, command.trackId)
                 startActivity(playIntent)
             }

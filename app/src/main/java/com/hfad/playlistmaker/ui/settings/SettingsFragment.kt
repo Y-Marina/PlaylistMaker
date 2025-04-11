@@ -3,44 +3,37 @@ package com.hfad.playlistmaker.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.CompoundButton
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.findNavController
 import com.hfad.playlistmaker.R
-import com.hfad.playlistmaker.databinding.ActivitySettingsBinding
+import com.hfad.playlistmaker.databinding.FragmentSettingsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SettingsActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivitySettingsBinding
+class SettingsFragment : Fragment() {
+    private lateinit var binding: FragmentSettingsBinding
 
     private val viewModel by viewModel<SettingsViewModel>()
 
     private lateinit var themeSwitchListener: CompoundButton.OnCheckedChangeListener
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        binding.toolbar.let {
-            it.setNavigationIcon(R.drawable.ic_arrow_back_24)
-            it.setNavigationIconTint(getColor(R.color.ic_color))
-            it.setNavigationOnClickListener { this.finish() }
-        }
-
-        viewModel.observeState().observe(this) { handleUiState(it) }
-        viewModel.observeCommand().observe(this) { handleCommand(it) }
+        viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
+        viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
         themeSwitchListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
             viewModel.onChangeTheme(isNight = isChecked)
@@ -71,10 +64,15 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun handleCommand(command: SettingsCommand) {
+        val navController = findNavController()
         when (command) {
             is SettingsCommand.NavigateToShare -> share()
             is SettingsCommand.NavigateToSupport -> support()
-            is SettingsCommand.NavigateToAgreement -> agreement()
+            is SettingsCommand.NavigateToAgreement -> {
+                navController.navigate(
+                    R.id.action_settingsFragment_to_agreeFragment
+                )
+            }
         }
     }
 
@@ -95,10 +93,5 @@ class SettingsActivity : AppCompatActivity() {
         intent.putExtra(Intent.EXTRA_SUBJECT, messageSubject)
         intent.putExtra(Intent.EXTRA_TEXT, messageText)
         startActivity(intent)
-    }
-
-    private fun agreement() {
-        val agreementIntent = Intent(this, AgreeActivity::class.java)
-        startActivity(agreementIntent)
     }
 }
