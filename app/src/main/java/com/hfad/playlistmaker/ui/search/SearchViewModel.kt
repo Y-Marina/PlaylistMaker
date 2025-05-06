@@ -1,14 +1,16 @@
 package com.hfad.playlistmaker.ui.search
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.api.MusicInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class SearchUiState(
     val isLoading: Boolean = false,
@@ -55,13 +57,11 @@ class SearchViewModel(
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var searchJob: Job? = null
 
     private var isClickAllowed = true
 
     private var latestSearchText = ""
-
-    private val searchRunnable = Runnable { search() }
 
     private val stateLiveData = MediatorLiveData(SearchUiState()).also { liveData ->
         liveData.addSource(historyInteractor.observeHistoryState()) { historyState ->
@@ -95,13 +95,15 @@ class SearchViewModel(
             )
             return
         }
-
         if (latestSearchText == changedText) {
             return
         } else {
             latestSearchText = changedText
-            handler.removeCallbacksAndMessages(searchRunnable)
-            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                search()
+            }
         }
     }
 
@@ -109,7 +111,10 @@ class SearchViewModel(
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
@@ -134,26 +139,19 @@ class SearchViewModel(
                 )
             )
 
-            musicInteractor.searchTracks(latestSearchText, object : MusicInteractor.TracksConsumer {
-                override fun onSuccess(tracks: List<Track>) {
-                    stateLiveData.postValue(
-                        stateLiveData.value?.copy(
-                            isLoading = false,
-                            findTracks = tracks,
-                            isError = false
+            viewModelScope.launch {
+                musicInteractor
+                    .searchTracks(latestSearchText)
+                    .collect { (tracks, message) ->
+                        stateLiveData.postValue(
+                            stateLiveData.value?.copy(
+                                isLoading = false,
+                                findTracks = tracks ?: emptyList(),
+                                isError = !message.isNullOrEmpty()
+                            )
                         )
-                    )
-                }
-
-                override fun onFailure(exception: Exception) {
-                    stateLiveData.postValue(
-                        stateLiveData.value?.copy(
-                            isLoading = false,
-                            isError = true
-                        )
-                    )
-                }
-            })
+                    }
+            }
         }
     }
 

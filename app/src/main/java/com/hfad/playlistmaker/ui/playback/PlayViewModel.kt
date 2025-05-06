@@ -1,14 +1,16 @@
 package com.hfad.playlistmaker.ui.playback
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class PlayUiState(
     val track: Track? = null,
@@ -20,7 +22,7 @@ sealed class PlayCommand {
     data object NavigateBack : PlayCommand()
 }
 
-enum class PlayState{
+enum class PlayState {
     STATE_DEFAULT,
     STATE_PREPARED,
     STATE_PLAYING,
@@ -30,23 +32,22 @@ enum class PlayState{
 class PlayViewModel(
     private val historyInteractor: HistoryInteractor,
     private val mediaPlayer: MediaPlayer
-): ViewModel() {
+) : ViewModel() {
     companion object {
-        private const val TIMER_DEBOUNCE = 1000L
+        private const val TIMER_DEBOUNCE = 300L
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var timeJob: Job? = null
 
     private var playerState = PlayState.STATE_DEFAULT
 
-    private val playTimeRunnable = object : Runnable {
-        var currentTime = 0
-        override fun run() {
+    private suspend fun startTimer() {
+        while (playerState == PlayState.STATE_PLAYING) {
+            var currentTime = 0
             val t = mediaPlayer.currentPosition
             currentTime = t.coerceAtLeast(currentTime)
-            println("myTag t = $t, c = $currentTime")
             stateLiveData.postValue(stateLiveData.value?.copy(currentTime = currentTime))
-            handler.postDelayed(this, TIMER_DEBOUNCE)
+            delay(TIMER_DEBOUNCE)
         }
     }
 
@@ -81,21 +82,25 @@ class PlayViewModel(
         }
         mediaPlayer.setOnCompletionListener {
             playerState = PlayState.STATE_PREPARED
-            handler.removeCallbacks(playTimeRunnable)
-            stateLiveData.postValue(stateLiveData.value?.copy(currentTime = 0))
+            viewModelScope.launch {
+                startTimer()
+                stateLiveData.postValue(stateLiveData.value?.copy(currentTime = 0))
+            }
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
         playerState = PlayState.STATE_PLAYING
-        handler.postDelayed(playTimeRunnable, TIMER_DEBOUNCE)
+        timeJob = viewModelScope.launch {
+            startTimer()
+        }
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
+        timeJob?.cancel()
         playerState = PlayState.STATE_PAUSED
-        handler.removeCallbacks(playTimeRunnable)
     }
 
     fun setTrack(trackId: Long) {
