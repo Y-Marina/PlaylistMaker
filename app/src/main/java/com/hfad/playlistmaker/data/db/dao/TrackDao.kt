@@ -15,6 +15,9 @@ interface TrackDao {
     @Query("SELECT * FROM track_table")
     fun getTracks(): Flow<List<TrackEntity>>
 
-    @Query("delete FROM track_table WHERE track_id = :id")
+    @Query("DELETE FROM track_table WHERE track_id = :id")
     suspend fun deleteTrack(id: Long)
+
+    @Query("SELECT * FROM track_table WHERE track_id = :id")
+    suspend fun getTrackById(id: Long): List<TrackEntity>
 }

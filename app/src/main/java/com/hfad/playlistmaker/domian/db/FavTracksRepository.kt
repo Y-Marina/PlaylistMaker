@@ -9,4 +9,6 @@ interface FavTracksRepository {
     suspend fun deleteFavTrack(id: Long)
 
     suspend fun addFavTrack(track: Track)
+
+    suspend fun getFavTrack(id: Long): List<Track>
 }

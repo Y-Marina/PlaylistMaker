@@ -71,6 +71,7 @@ class PlayActivity : AppCompatActivity() {
                 .into(binding.artworkIm)
 
             binding.playBt.isEnabled = state.isPlayButtonEnabled
+            binding.favoriteBt.isChecked = state.track.isFavorite
             binding.trackNameTv.text = state.track.trackName
             binding.artistNameTv.text = state.track.artistName
             binding.durationTimeTv.text = state.track.trackTime.toTime()

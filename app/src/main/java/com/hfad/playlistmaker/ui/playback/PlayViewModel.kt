@@ -10,6 +10,7 @@ import com.hfad.playlistmaker.domian.db.FavTracksInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -115,8 +116,11 @@ class PlayViewModel(
             if (track == null) {
                 commandLiveData.postValue(PlayCommand.NavigateBack)
             } else {
-                stateLiveData.postValue(stateLiveData.value?.copy(track = track))
-                preparePlayer(track)
+                viewModelScope.launch {
+                    val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(trackId) }
+                    stateLiveData.postValue(stateLiveData.value?.copy(track = track.copy(isFavorite = trackIsFavoriteDeferred.await().isNotEmpty())))
+                    preparePlayer(track)
+                }
             }
         } else {
             return

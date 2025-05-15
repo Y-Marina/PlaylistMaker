@@ -22,14 +22,15 @@ class LocalStorageImpl(
         return historyState
     }
 
-    init {
-        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            if (key == LAST_VIEW_KEY) {
-                historyState.postValue(getAllLocalTrack())
-            }
+    private var sharedListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == LAST_VIEW_KEY) {
+            historyState.postValue(getAllLocalTrack())
         }
     }
 
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedListener)
+    }
 
     override fun getAllLocalTrack(): List<Track> {
         val json = sharedPreferences.getString(LAST_VIEW_KEY, null) ?: return emptyList()

@@ -60,6 +60,10 @@ class FavTracksRepositoryImpl(
         }
     }
 
+    override suspend fun getFavTrack(id: Long): List<Track> {
+        return trackDao.getTrackById(id).map { it.toTrack() }
+    }
+
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { tracks -> trackDbConvector.map(tracks) }
     }
