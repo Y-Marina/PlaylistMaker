@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
+import com.hfad.playlistmaker.domian.db.FavTracksInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import kotlinx.coroutines.Job
@@ -31,7 +32,8 @@ enum class PlayState {
 
 class PlayViewModel(
     private val historyInteractor: HistoryInteractor,
-    private val mediaPlayer: MediaPlayer
+    private val mediaPlayer: MediaPlayer,
+    private val favTracksInteractor: FavTracksInteractor
 ) : ViewModel() {
     companion object {
         private const val TIMER_DEBOUNCE = 300L
@@ -125,5 +127,18 @@ class PlayViewModel(
         mediaPlayer.stop()
         mediaPlayer.reset()
         super.onCleared()
+    }
+
+    fun onFavoriteClicked(isChecked: Boolean) {
+        val track = stateLiveData.value?.track
+        if (track == null) return
+
+        viewModelScope.launch {
+            if (isChecked) {
+                favTracksInteractor.addFavTrack(track)
+            } else {
+                favTracksInteractor.deleteFavTrack(track.trackId)
+            }
+        }
     }
 }

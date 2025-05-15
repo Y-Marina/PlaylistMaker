@@ -53,6 +53,10 @@ class PlayActivity : AppCompatActivity() {
         binding.playBt.setOnClickListener {
             viewModel.playbackControl()
         }
+
+        binding.favoriteBt.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onFavoriteClicked(isChecked)
+        }
     }
 
     private fun handleUiState(state: PlayUiState) {

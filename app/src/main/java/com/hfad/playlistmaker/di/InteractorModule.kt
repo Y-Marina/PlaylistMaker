@@ -1,6 +1,8 @@
 package com.hfad.playlistmaker.di
 
 import com.hfad.playlistmaker.domian.api.MusicInteractor
+import com.hfad.playlistmaker.domian.db.FavTracksInteractor
+import com.hfad.playlistmaker.domian.impl.FavTracksInteractorImpl
 import com.hfad.playlistmaker.domian.impl.MusicInteractorImpl
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import com.hfad.playlistmaker.domian.search.impl.HistoryInteractorImpl
@@ -19,5 +21,9 @@ val interactorModule = module {
 
     single<SettingsInteractor> {
         SettingsInteractorImpl(get())
+    }
+
+    single<FavTracksInteractor> {
+        FavTracksInteractorImpl(get())
     }
 }
