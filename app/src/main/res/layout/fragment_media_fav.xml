@@ -7,7 +7,7 @@
     tools:context=".ui.playlist.MediaFavFragment">
 
     <ImageView
-        android:id="@+id/placeholder_pic"
+        android:id="@+id/empty_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="210dp"
@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/empty_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -24,5 +25,21 @@
         android:textColor="@color/text_color"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/placeholder_pic" />
+        app:layout_constraintTop_toBottomOf="@id/empty_image" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/empty_flow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="empty_image, empty_text"
+        tools:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/content_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/track_list_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>

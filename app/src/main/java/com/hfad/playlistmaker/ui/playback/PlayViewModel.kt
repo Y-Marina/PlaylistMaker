@@ -106,18 +106,13 @@ class PlayViewModel(
         playerState = PlayState.STATE_PAUSED
     }
 
-    fun setTrack(trackId: Long) {
-        val track = if (trackId == -1L) {
-            null
-        } else {
-            historyInteractor.getTrackById(trackId = trackId)
-        }
+    fun setTrack(track: Track?) {
         if (playerState == PlayState.STATE_DEFAULT) {
             if (track == null) {
                 commandLiveData.postValue(PlayCommand.NavigateBack)
             } else {
                 viewModelScope.launch {
-                    val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(trackId) }
+                    val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(track.trackId) }
                     stateLiveData.postValue(stateLiveData.value?.copy(track = track.copy(isFavorite = trackIsFavoriteDeferred.await().isNotEmpty())))
                     preparePlayer(track)
                 }
@@ -139,7 +134,7 @@ class PlayViewModel(
 
         viewModelScope.launch {
             if (isChecked) {
-                favTracksInteractor.addFavTrack(track)
+                favTracksInteractor.addFavTrack(track, java.time.Instant.now().epochSecond)
             } else {
                 favTracksInteractor.deleteFavTrack(track.trackId)
             }

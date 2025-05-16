@@ -13,6 +13,7 @@ import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.ActivityPlayBinding
+import com.hfad.playlistmaker.domian.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -44,7 +45,7 @@ class PlayActivity : AppCompatActivity() {
             it.setNavigationOnClickListener { this.finish() }
         }
 
-        val trackId = intent.getLongExtra(TRACK_ITEM, -1L)
+        val trackId = intent.getParcelableExtra<Track>(TRACK_ITEM)
         viewModel.setTrack(trackId)
 
         viewModel.observeState().observe(this) { handleUiState(it) }

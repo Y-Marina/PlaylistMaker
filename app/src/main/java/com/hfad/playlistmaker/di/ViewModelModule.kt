@@ -23,7 +23,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        MediaFavViewModel()
+        MediaFavViewModel(get())
     }
 
     viewModel {

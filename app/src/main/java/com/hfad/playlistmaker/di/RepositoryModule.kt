@@ -2,7 +2,6 @@ package com.hfad.playlistmaker.di
 
 import com.hfad.playlistmaker.data.FavTracksRepositoryImpl
 import com.hfad.playlistmaker.data.MusicRepositoryImpl
-import com.hfad.playlistmaker.data.converters.TrackDbConvertor
 import com.hfad.playlistmaker.data.search.history.HistoryRepository
 import com.hfad.playlistmaker.data.settings.SettingsRepository
 import com.hfad.playlistmaker.domian.api.MusicRepository
@@ -25,8 +24,6 @@ val repositoryModule = module {
     }
 
     single<FavTracksRepository> {
-        FavTracksRepositoryImpl(get(), get())
+        FavTracksRepositoryImpl(get())
     }
-
-    factory { TrackDbConvertor() }
 }

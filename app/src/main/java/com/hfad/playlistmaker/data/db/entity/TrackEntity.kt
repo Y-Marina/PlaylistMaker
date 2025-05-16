@@ -35,5 +35,8 @@ data class TrackEntity(
     val country: String,
 
     @ColumnInfo(name = "preview_url")
-    val previewUrl: String
+    val previewUrl: String,
+
+    @ColumnInfo(name = "fav_time")
+    val favTime: Long
 )
