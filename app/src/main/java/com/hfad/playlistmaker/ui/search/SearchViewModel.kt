@@ -43,7 +43,7 @@ data class SearchUiState(
 }
 
 sealed class SearchCommand {
-    data class NavigateToPlayer(val trackId: Long) : SearchCommand()
+    data class NavigateToPlayer(val track: Track) : SearchCommand()
 }
 
 class SearchViewModel(
@@ -158,7 +158,7 @@ class SearchViewModel(
     override fun onItemClick(item: SearchItemUiModel.Item) {
         clickDebounce()
         historyInteractor.addTrack(item.track)
-        commandLiveData.postValue(SearchCommand.NavigateToPlayer(trackId = item.track.trackId))
+        commandLiveData.postValue(SearchCommand.NavigateToPlayer(track = item.track))
     }
 
     override fun onClearHistoryClick() {

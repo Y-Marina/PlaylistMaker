@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
+import com.hfad.playlistmaker.domian.db.FavTracksInteractor
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.domian.search.api.HistoryInteractor
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,7 +33,8 @@ enum class PlayState {
 
 class PlayViewModel(
     private val historyInteractor: HistoryInteractor,
-    private val mediaPlayer: MediaPlayer
+    private val mediaPlayer: MediaPlayer,
+    private val favTracksInteractor: FavTracksInteractor
 ) : ViewModel() {
     companion object {
         private const val TIMER_DEBOUNCE = 300L
@@ -103,18 +106,16 @@ class PlayViewModel(
         playerState = PlayState.STATE_PAUSED
     }
 
-    fun setTrack(trackId: Long) {
-        val track = if (trackId == -1L) {
-            null
-        } else {
-            historyInteractor.getTrackById(trackId = trackId)
-        }
+    fun setTrack(track: Track?) {
         if (playerState == PlayState.STATE_DEFAULT) {
             if (track == null) {
                 commandLiveData.postValue(PlayCommand.NavigateBack)
             } else {
-                stateLiveData.postValue(stateLiveData.value?.copy(track = track))
-                preparePlayer(track)
+                viewModelScope.launch {
+                    val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(track.trackId) }
+                    stateLiveData.postValue(stateLiveData.value?.copy(track = track.copy(isFavorite = trackIsFavoriteDeferred.await().isNotEmpty())))
+                    preparePlayer(track)
+                }
             }
         } else {
             return
@@ -125,5 +126,18 @@ class PlayViewModel(
         mediaPlayer.stop()
         mediaPlayer.reset()
         super.onCleared()
+    }
+
+    fun onFavoriteClicked(isChecked: Boolean) {
+        val track = stateLiveData.value?.track
+        if (track == null) return
+
+        viewModelScope.launch {
+            if (isChecked) {
+                favTracksInteractor.addFavTrack(track, java.time.Instant.now().epochSecond)
+            } else {
+                favTracksInteractor.deleteFavTrack(track.trackId)
+            }
+        }
     }
 }

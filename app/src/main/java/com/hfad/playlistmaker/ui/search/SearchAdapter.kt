@@ -17,7 +17,7 @@ class SearchAdapter(val callback: Callback) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface Callback {
         fun onItemClick(item: SearchItemUiModel.Item)
-        fun onClearHistoryClick()
+        fun onClearHistoryClick() {}
     }
 
     var data: List<SearchItemUiModel> = emptyList()

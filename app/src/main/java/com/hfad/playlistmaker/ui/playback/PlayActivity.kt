@@ -13,6 +13,7 @@ import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.ActivityPlayBinding
+import com.hfad.playlistmaker.domian.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -44,7 +45,7 @@ class PlayActivity : AppCompatActivity() {
             it.setNavigationOnClickListener { this.finish() }
         }
 
-        val trackId = intent.getLongExtra(TRACK_ITEM, -1L)
+        val trackId = intent.getParcelableExtra<Track>(TRACK_ITEM)
         viewModel.setTrack(trackId)
 
         viewModel.observeState().observe(this) { handleUiState(it) }
@@ -52,6 +53,10 @@ class PlayActivity : AppCompatActivity() {
 
         binding.playBt.setOnClickListener {
             viewModel.playbackControl()
+        }
+
+        binding.favoriteBt.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onFavoriteClicked(isChecked)
         }
     }
 
@@ -67,6 +72,7 @@ class PlayActivity : AppCompatActivity() {
                 .into(binding.artworkIm)
 
             binding.playBt.isEnabled = state.isPlayButtonEnabled
+            binding.favoriteBt.isChecked = state.track.isFavorite
             binding.trackNameTv.text = state.track.trackName
             binding.artistNameTv.text = state.track.artistName
             binding.durationTimeTv.text = state.track.trackTime.toTime()

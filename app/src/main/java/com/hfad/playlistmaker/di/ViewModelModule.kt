@@ -15,7 +15,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlayViewModel(get(), get())
+        PlayViewModel(get(), get(), get())
     }
 
     viewModel {
@@ -23,7 +23,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        MediaFavViewModel()
+        MediaFavViewModel(get())
     }
 
     viewModel {
