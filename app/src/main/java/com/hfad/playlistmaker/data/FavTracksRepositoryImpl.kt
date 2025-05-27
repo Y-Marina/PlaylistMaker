@@ -33,7 +33,7 @@ private fun Track.toTrackEntity(time: Long) = TrackEntity(
     primaryGenreName = primaryGenreName,
     country = country,
     previewUrl = previewUrl,
-    favTime = time
+    addTime = time
 )
 
 class FavTracksRepositoryImpl(
@@ -42,24 +42,24 @@ class FavTracksRepositoryImpl(
     private val trackDao = appDatabase.trackDao()
 
     override suspend fun getFavTracks(): Flow<List<Track>> {
-        return appDatabase.trackDao().getTracks().map { entities ->
-            entities.sortedByDescending { it.favTime }.map { it.toTrack() }
+        return appDatabase.trackDao().getFavTracks().map { entities ->
+            entities.sortedByDescending { it.addTime }.map { it.toTrack() }
         }.distinctUntilChanged()
     }
 
     override suspend fun deleteFavTrack(id: Long) {
         appDatabase.withTransaction {
-            trackDao.deleteTrack(id)
+            trackDao.deleteFavTrack(id)
         }
     }
 
     override suspend fun addFavTrack(track: Track, time: Long) {
         appDatabase.withTransaction {
-            trackDao.insertTrack(track.toTrackEntity(time))
+            trackDao.insertFavTrack(track.toTrackEntity(time))
         }
     }
 
     override suspend fun getFavTrack(id: Long): List<Track> {
-        return trackDao.getTrackById(id).map { it.toTrack() }
+        return trackDao.getFavTrackById(id).map { it.toTrack() }
     }
 }

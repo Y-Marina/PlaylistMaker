@@ -82,7 +82,7 @@ class SearchFragment : Fragment() {
         when (command) {
             is SearchCommand.NavigateToPlayer -> {
                 val playIntent = Intent(requireContext(), PlayActivity::class.java)
-                playIntent.putExtra(TRACK_ITEM, command.track)
+                playIntent.putExtra(TRACK_ITEM, command.track   )
                 startActivity(playIntent)
             }
         }
