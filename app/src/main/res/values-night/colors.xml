@@ -11,4 +11,5 @@
     <color name="second_text_color">#FFFFFF</color>
     <color name="track_name_color">#FFFFFF</color>
     <color name="white_to_black">#1A1B22</color>
+    <color name="grey_to_white">#FFFFFF</color>
 </resources>

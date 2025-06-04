@@ -16,4 +16,5 @@
     <color name="second_text_color">#AEAFB4</color>
     <color name="track_name_color">#000000</color>
     <color name="white_to_black">#FFFFFF</color>
+    <color name="grey_to_white">#AEAFB4</color>
 </resources>

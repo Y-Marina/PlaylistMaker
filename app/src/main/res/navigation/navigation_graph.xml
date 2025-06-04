@@ -5,6 +5,14 @@
     android:id="@+id/navigation_grap"
     app:startDestination="@id/media_fragment">
 
+    <action
+        android:id="@+id/to_warning_dialog"
+        app:destination="@id/warning_dialog" />
+
+    <action
+        android:id="@+id/action_to_createPlaylistFragment"
+        app:destination="@id/create_playlist_fragment" />
+
     <fragment
         android:id="@+id/search_fragment"
         android:name="com.hfad.playlistmaker.ui.search.SearchFragment"
@@ -33,4 +41,46 @@
         android:name="com.hfad.playlistmaker.ui.settings.AgreeFragment"
         android:label="AgreeFragment"
         tools:layout="@layout/fragment_agree" />
+
+    <fragment
+        android:id="@+id/media_playlist_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.MediaPlaylistFragment"
+        android:label="fragment_media_playlist"
+        tools:layout="@layout/fragment_media_playlist" />
+
+    <fragment
+        android:id="@+id/create_playlist_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.CreatePlaylistFragment"
+        android:label="fragment_create_playlist"
+        tools:layout="@layout/fragment_create_playlist">
+        <argument
+            android:name="resultKey"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/warning_dialog"
+        android:name="com.hfad.playlistmaker.ui.common.WarningDialogFragment">
+        <argument
+            android:name="resultKey"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <argument
+            android:name="positive_button"
+            app:argType="string" />
+        <argument
+            android:name="neutral_button"
+            app:argType="string" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/addToPlaylistDialogFragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.AddToPlaylistDialogFragment"
+        android:label="fragment_add_to_playlist_dialog"
+        tools:layout="@layout/fragment_add_to_playlist_dialog" />
 </navigation>

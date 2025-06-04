@@ -17,7 +17,7 @@ class FavTracksInteractorImpl(
     }
 
     override suspend fun addFavTrack(track: Track, time: Long) {
-        return favTracksRepository.addFavTrack(track, time)
+        favTracksRepository.addFavTrack(track, time)
     }
 
     override suspend fun getFavTrack(id: Long): List<Track> {

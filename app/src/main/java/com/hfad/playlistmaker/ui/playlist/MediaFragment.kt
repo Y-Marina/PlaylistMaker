@@ -1,13 +1,19 @@
 package com.hfad.playlistmaker.ui.playlist
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.setFragmentResultListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.FragmentMediaBinding
+import com.hfad.playlistmaker.ui.playlist.MediaPlaylistFragment.Companion.createPlaylistKey
 
 class MediaFragment : Fragment() {
     private lateinit var binding: FragmentMediaBinding
@@ -24,6 +30,17 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setFragmentResultListener(createPlaylistKey) { _, bundle ->
+            val playlistName = CreatePlaylistResult.fromBundle(bundle).playlistName
+            val message = "Плейлист $playlistName создан"
+            val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            val snackbarLayout = snackbar.view
+            val snackbarText = snackbarLayout
+                .findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+            snackbarText.textAlignment = TEXT_ALIGNMENT_CENTER
+            snackbar.show()
+        }
 
         binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
 

@@ -36,4 +36,25 @@
     <string name="media_nothing_found">Ваша медиатека пуста</string>
     <string name="no_playlist">Вы не создали ни одного плейлиста</string>
     <string name="new_playlist">Новый плейлист</string>
+
+    <string name="playlist_photo_description">Фото плейлиста</string>
+    <string name="playlist_name">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="create">Создать</string>
+
+    <string name="dialog_title">Завершить создание плейлиста?</string>
+    <string name="dialog_message">Все несохраненные данные будут потеряны</string>
+    <string name="dialog_neutral_button">Отмена</string>
+    <string name="dialog_positive_button">Завершить</string>
+
+    <plurals name="track_count">
+        <item quantity="zero">%1$d треков</item>
+        <item quantity="one">%1$d трек</item>
+        <item quantity="two">%1$d трека</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+
+    <string name="add_to_playlist">Добавить в плейлист</string>
 </resources>
