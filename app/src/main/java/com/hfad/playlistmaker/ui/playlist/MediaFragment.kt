@@ -1,7 +1,6 @@
 package com.hfad.playlistmaker.ui.playlist
 
 import android.os.Bundle
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +8,18 @@ import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.FragmentMediaBinding
 import com.hfad.playlistmaker.ui.playlist.MediaPlaylistFragment.Companion.createPlaylistKey
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaFragment : Fragment() {
+
+    private val viewModel: MediaViewModel by viewModel()
+
     private lateinit var binding: FragmentMediaBinding
 
     private lateinit var tabMediator: TabLayoutMediator
@@ -42,6 +46,8 @@ class MediaFragment : Fragment() {
             snackbar.show()
         }
 
+        viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
+
         binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -51,6 +57,16 @@ class MediaFragment : Fragment() {
             }
         }
         tabMediator.attach()
+    }
+
+    private fun handleCommand(command: MediaCommand) {
+        val navController = findNavController()
+        when (command) {
+            is MediaCommand.NavigateToNewPlaylist -> {}
+            is MediaCommand.NavigateToPlayer -> navController.navigate(
+                MediaFragmentDirections.toPlayFragment(command.track)
+            )
+        }
     }
 
     override fun onDestroyView() {

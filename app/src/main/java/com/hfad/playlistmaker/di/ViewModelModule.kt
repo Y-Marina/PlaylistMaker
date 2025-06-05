@@ -2,9 +2,9 @@ package com.hfad.playlistmaker.di
 
 import com.hfad.playlistmaker.ui.main.MainViewModel
 import com.hfad.playlistmaker.ui.playback.PlayViewModel
+import com.hfad.playlistmaker.ui.playlist.AddToPlaylistDialogViewModel
 import com.hfad.playlistmaker.ui.playlist.CreatePlaylistViewModel
-import com.hfad.playlistmaker.ui.playlist.MediaFavViewModel
-import com.hfad.playlistmaker.ui.playlist.MediaPlaylistViewModel
+import com.hfad.playlistmaker.ui.playlist.MediaViewModel
 import com.hfad.playlistmaker.ui.search.SearchViewModel
 import com.hfad.playlistmaker.ui.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -24,11 +24,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        MediaFavViewModel(get())
-    }
-
-    viewModel {
-        MediaPlaylistViewModel()
+        MediaViewModel(get(), get())
     }
 
     viewModel {
@@ -37,5 +33,9 @@ val viewModelModule = module {
 
     viewModel {
         CreatePlaylistViewModel(get())
+    }
+
+    viewModel {
+        AddToPlaylistDialogViewModel(get())
     }
 }

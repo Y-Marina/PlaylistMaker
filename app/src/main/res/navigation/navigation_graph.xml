@@ -13,6 +13,19 @@
         android:id="@+id/action_to_createPlaylistFragment"
         app:destination="@id/create_playlist_fragment" />
 
+    <action
+        android:id="@+id/to_play_fragment"
+        app:destination="@id/play_fragment" />
+
+    <fragment
+        android:id="@+id/play_fragment"
+        android:name="com.hfad.playlistmaker.ui.playback.PlayFragment"
+        tools:layout="@layout/fragment_play">
+        <argument
+            android:name="track"
+            app:argType="com.hfad.playlistmaker.domian.models.Track" />
+    </fragment>
+
     <fragment
         android:id="@+id/search_fragment"
         android:name="com.hfad.playlistmaker.ui.search.SearchFragment"

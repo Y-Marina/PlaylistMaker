@@ -21,6 +21,7 @@ data class PlayUiState(
 )
 
 sealed class PlayCommand {
+    data object AddPlaylist : PlayCommand()
     data object NavigateBack : PlayCommand()
 }
 
@@ -128,6 +129,10 @@ class PlayViewModel(
         super.onCleared()
     }
 
+    fun onAddPlaylistClicked() {
+        commandLiveData.postValue(PlayCommand.AddPlaylist)
+    }
+
     fun onFavoriteClicked(isChecked: Boolean) {
         val track = stateLiveData.value?.track
         if (track == null) return
@@ -139,5 +144,9 @@ class PlayViewModel(
                 favTracksInteractor.deleteFavTrack(track.trackId)
             }
         }
+    }
+
+    fun onBackClicked() {
+        commandLiveData.postValue(PlayCommand.NavigateBack)
     }
 }

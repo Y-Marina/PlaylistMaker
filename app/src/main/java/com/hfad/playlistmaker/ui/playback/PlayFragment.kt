@@ -1,55 +1,65 @@
 package com.hfad.playlistmaker.ui.playback
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.common.toTime
-import com.hfad.playlistmaker.databinding.ActivityPlayBinding
-import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.databinding.FragmentPlayBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 const val TRACK_ITEM = "track_item"
 
-class PlayActivity : AppCompatActivity() {
+class PlayFragment : Fragment() {
 
-    private lateinit var binding: ActivityPlayBinding
+    private val args by navArgs<PlayFragmentArgs>()
+
+    private lateinit var binding: FragmentPlayBinding
 
     private val viewModel by viewModel<PlayViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
-        binding = ActivityPlayBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = FragmentPlayBinding.inflate(layoutInflater)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        viewModel.setTrack(args.track)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPlayBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.let {
             it.setNavigationIcon(R.drawable.ic_arrow_back_24)
-            it.setNavigationIconTint(getColor(R.color.ic_color))
-            it.setNavigationOnClickListener { this.finish() }
+            it.setNavigationOnClickListener { viewModel.onBackClicked() }
         }
 
-        val trackId = intent.getParcelableExtra<Track>(TRACK_ITEM)
-        viewModel.setTrack(trackId)
+        viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
+        viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
-        viewModel.observeState().observe(this) { handleUiState(it) }
-        viewModel.observeCommand().observe(this) { handleCommand(it) }
+        binding.addToPlaylistBt.setOnClickListener {
+            viewModel.onAddPlaylistClicked()
+        }
 
         binding.playBt.setOnClickListener {
             viewModel.playbackControl()
@@ -67,7 +77,7 @@ class PlayActivity : AppCompatActivity() {
                 .load(state.track.getCoverArtwork())
                 .centerCrop()
                 .transition(withCrossFade())
-                .transform(RoundedCorners(dpToPx(8f, this)))
+                .transform(RoundedCorners(dpToPx(8f, requireContext())))
                 .placeholder(R.drawable.ic_placeholder)
                 .into(binding.artworkIm)
 
@@ -95,8 +105,10 @@ class PlayActivity : AppCompatActivity() {
     }
 
     private fun handleCommand(command: PlayCommand) {
-        when(command) {
-            is PlayCommand.NavigateBack -> finish()
+        val navController = findNavController()
+        when (command) {
+            is PlayCommand.AddPlaylist -> navController.navigate(R.id.addToPlaylistDialogFragment)
+            is PlayCommand.NavigateBack -> navController.popBackStack()
         }
     }
 

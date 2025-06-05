@@ -12,6 +12,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,7 @@ class MediaPlaylistFragment : Fragment() {
 
     private lateinit var binding: FragmentMediaPlaylistBinding
 
-    private val viewModel: MediaPlaylistViewModel by viewModel()
+    private val viewModel: MediaViewModel by viewModels({ requireParentFragment() })
 
     private lateinit var adapter: PlaylistAdapter
 
@@ -47,7 +48,7 @@ class MediaPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
+        viewModel.observePlaylistState().observe(viewLifecycleOwner) { handleUiState(it) }
 
         binding.newPlaylistButton.setOnClickListener {
             findNavController().navigate(
@@ -59,12 +60,12 @@ class MediaPlaylistFragment : Fragment() {
 
         adapter = PlaylistAdapter(viewModel)
         binding.contentList.adapter = adapter
-        binding.contentList.layoutManager = GridLayoutManager(requireContext(), 2,
-            GridLayoutManager.VERTICAL, false)
-        binding.contentList.addItemDecoration(PlaylistDecoration())
+        binding.contentList.layoutManager = GridLayoutManager(
+            requireContext(), 2,
+            GridLayoutManager.VERTICAL, false
+        )
 
-//        adapter.data =
-//        adapter.notifyDataSetChanged()
+        binding.contentList.addItemDecoration(PlaylistDecoration())
         binding.contentList.doOnNextLayout {
             binding.contentList.invalidateItemDecorations()
         }

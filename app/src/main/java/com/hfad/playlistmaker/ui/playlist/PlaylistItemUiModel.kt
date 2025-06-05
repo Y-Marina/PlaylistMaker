@@ -3,19 +3,21 @@ package com.hfad.playlistmaker.ui.playlist
 import com.hfad.playlistmaker.domian.models.Playlist
 
 sealed class PlaylistItemUiModel {
+    abstract val playlist: Playlist
+
     data class BigPlaylistItem(
-        private val playlistBig: Playlist
+        override val playlist: Playlist
     ) : PlaylistItemUiModel() {
-        val photoUrl = playlistBig.photoUrl
-        val name = playlistBig.name
+        val photoUrl = playlist.photoUrl
+        val name = playlist.name
         val trackCount = 10
     }
 
     data class SmallPlaylistItem(
-        private val playlistSmall: Playlist
+        override val playlist: Playlist
     ) : PlaylistItemUiModel() {
-        val photoUrl = playlistSmall.photoUrl
-        val name = playlistSmall.name
+        val photoUrl = playlist.photoUrl
+        val name = playlist.name
         val trackCount = 10
     }
 }
