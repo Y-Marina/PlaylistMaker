@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.models.Playlist
+import com.hfad.playlistmaker.domian.models.Track
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -31,10 +32,22 @@ class AddToPlaylistDialogViewModel(
         }
     }
 
+    private lateinit var _track: Track
+
+    fun setTrack(track: Track) {
+        _track = track
+    }
+
     private val playlistStateLiveData = MutableLiveData(AddPlaylistUiState())
     fun observePlaylistState(): LiveData<AddPlaylistUiState> = playlistStateLiveData
 
     override fun onItemClick(item: PlaylistItemUiModel) {
-
+        viewModelScope.launch {
+            playlistInteractor.addTrackToPlaylist(
+                _track,
+                java.time.Instant.now().epochSecond,
+                item.playlist.name
+            )
+        }
     }
 }

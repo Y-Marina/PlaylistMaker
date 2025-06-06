@@ -24,6 +24,9 @@
         <argument
             android:name="track"
             app:argType="com.hfad.playlistmaker.domian.models.Track" />
+        <action
+            android:id="@+id/action_to_add_to_playlist"
+            app:destination="@id/addToPlaylistDialogFragment" />
     </fragment>
 
     <fragment
@@ -95,5 +98,9 @@
         android:id="@+id/addToPlaylistDialogFragment"
         android:name="com.hfad.playlistmaker.ui.playlist.AddToPlaylistDialogFragment"
         android:label="fragment_add_to_playlist_dialog"
-        tools:layout="@layout/fragment_add_to_playlist_dialog" />
+        tools:layout="@layout/fragment_add_to_playlist_dialog">
+        <argument
+            android:name="track"
+            app:argType="com.hfad.playlistmaker.domian.models.Track" />
+    </dialog>
 </navigation>

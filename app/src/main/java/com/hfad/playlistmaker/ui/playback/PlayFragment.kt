@@ -107,7 +107,9 @@ class PlayFragment : Fragment() {
     private fun handleCommand(command: PlayCommand) {
         val navController = findNavController()
         when (command) {
-            is PlayCommand.AddPlaylist -> navController.navigate(R.id.addToPlaylistDialogFragment)
+            is PlayCommand.AddPlaylist -> navController.navigate(
+                PlayFragmentDirections.actionToAddToPlaylist(command.track)
+            )
             is PlayCommand.NavigateBack -> navController.popBackStack()
         }
     }

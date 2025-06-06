@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hfad.playlistmaker.databinding.FragmentAddToPlaylistDialogBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,6 +14,8 @@ class AddToPlaylistDialogFragment : BottomSheetDialogFragment() {
     companion object {
         val createPlaylistKey = "${AddToPlaylistDialogFragment::class.qualifiedName}.createPlaylistKey"
     }
+
+    private val args by navArgs<AddToPlaylistDialogFragmentArgs>()
 
     private lateinit var binding: FragmentAddToPlaylistDialogBinding
 
@@ -32,6 +35,8 @@ class AddToPlaylistDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.observePlaylistState().observe(viewLifecycleOwner) { handleUiState(it) }
+
+        viewModel.setTrack(args.track)
 
         adapter = PlaylistAdapter(viewModel)
         binding.contentList.adapter = adapter
