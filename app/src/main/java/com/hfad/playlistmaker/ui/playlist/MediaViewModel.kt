@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.db.FavTracksInteractor
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
-import com.hfad.playlistmaker.domian.models.Playlist
+import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.ui.search.SearchAdapter
 import com.hfad.playlistmaker.ui.search.SearchItemUiModel
@@ -23,13 +23,11 @@ data class FavUiState(
 }
 
 data class PlaylistUiState(
-    val playlists: List<Playlist> = emptyList()
+    val playlists: List<PlaylistWithTracks> = emptyList()
 ) {
     val items = playlists.map { playlist ->
         PlaylistItemUiModel.BigPlaylistItem(playlist)
     }
-
-    val isEmptyViewVisible by lazy { playlists.isEmpty() }
 }
 
 sealed class MediaCommand {

@@ -5,8 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "playlist_track_table")
-data class PlaylistTrackEntity (
-    @PrimaryKey
+data class PlaylistTrackEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long = 0L,
+
     @ColumnInfo(name = "track_id")
     val trackId: Long,
 

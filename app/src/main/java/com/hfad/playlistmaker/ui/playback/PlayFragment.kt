@@ -3,25 +3,32 @@ package com.hfad.playlistmaker.ui.playback
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.google.android.material.snackbar.Snackbar
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.common.toTime
 import com.hfad.playlistmaker.databinding.FragmentPlayBinding
+import com.hfad.playlistmaker.ui.playlist.AddPlaylistResult
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-const val TRACK_ITEM = "track_item"
-
 class PlayFragment : Fragment() {
+
+    companion object {
+        private val addToPlaylistKey = "${PlayFragment::class.qualifiedName}.addToPlaylistKey"
+    }
 
     private val args by navArgs<PlayFragmentArgs>()
 
@@ -48,6 +55,24 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setFragmentResultListener(addToPlaylistKey) { _, bundle ->
+            val result = AddPlaylistResult.fromBundle(bundle)
+            val message = getString(
+                if (result.success) {
+                    R.string.dialog_success_message
+                } else {
+                    R.string.dialog_error_message
+                },
+                result.playlistName
+            )
+            val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            val snackbarLayout = snackbar.view
+            val snackbarText = snackbarLayout
+                .findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+            snackbarText.textAlignment = TEXT_ALIGNMENT_CENTER
+            snackbar.show()
+        }
 
         binding.toolbar.let {
             it.setNavigationIcon(R.drawable.ic_arrow_back_24)
@@ -108,8 +133,9 @@ class PlayFragment : Fragment() {
         val navController = findNavController()
         when (command) {
             is PlayCommand.AddPlaylist -> navController.navigate(
-                PlayFragmentDirections.actionToAddToPlaylist(command.track)
+                PlayFragmentDirections.actionToAddToPlaylist(addToPlaylistKey, command.track)
             )
+
             is PlayCommand.NavigateBack -> navController.popBackStack()
         }
     }

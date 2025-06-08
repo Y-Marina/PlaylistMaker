@@ -19,7 +19,7 @@ import com.hfad.playlistmaker.ui.common.WarningDialogResult
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreatePlaylistFragment : Fragment() {
-    companion object{
+    companion object {
         private val className = CreatePlaylistFragment::class.qualifiedName
         private val closeDialogKey = "${className}.closeDialogKey"
     }
@@ -43,15 +43,18 @@ class CreatePlaylistFragment : Fragment() {
 
         setFragmentResultListener(closeDialogKey) { _, bundle ->
             val result = WarningDialogResult.fromBundle(bundle)
-            when(result) {
+            when (result) {
                 is WarningDialogResult.Success -> {
                     findNavController().popBackStack()
                 }
+
                 is WarningDialogResult.Cancel -> {
                     // nothing
                 }
             }
         }
+
+        viewModel.setTrack(args.track)
 
         binding.toolbar.let {
             it.setNavigationIcon(R.drawable.ic_arrow_back_24)
@@ -113,8 +116,16 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun handleCommand(command: CreatePlaylistCommand) {
         val navController = findNavController()
-        when(command) {
+        when (command) {
             is CreatePlaylistCommand.NavigateToBackWithSuccess -> {
+                setFragmentResult(
+                    args.resultKey,
+                    command.result.toBundle()
+                )
+                navController.popBackStack()
+            }
+
+            is CreatePlaylistCommand.NavigateToPlay -> {
                 setFragmentResult(
                     args.resultKey,
                     command.result.toBundle()
@@ -133,6 +144,7 @@ class CreatePlaylistFragment : Fragment() {
                     )
                 )
             }
+
             is CreatePlaylistCommand.NavigateToBack -> {
                 navController.popBackStack()
             }

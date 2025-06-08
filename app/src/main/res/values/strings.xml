@@ -47,6 +47,9 @@
     <string name="dialog_neutral_button">Отмена</string>
     <string name="dialog_positive_button">Завершить</string>
 
+    <string name="dialog_success_message">"Добавлено в плейлист %1$s</string>
+    <string name="dialog_error_message">"Трек уже добавлен в плейлист %1$s</string>
+
     <plurals name="track_count">
         <item quantity="zero">%1$d треков</item>
         <item quantity="one">%1$d трек</item>

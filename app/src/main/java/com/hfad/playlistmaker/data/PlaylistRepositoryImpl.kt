@@ -4,18 +4,20 @@ import androidx.room.withTransaction
 import com.hfad.playlistmaker.data.db.AppDatabase
 import com.hfad.playlistmaker.data.db.entity.PlaylistEntity
 import com.hfad.playlistmaker.data.db.entity.PlaylistTrackEntity
-import com.hfad.playlistmaker.data.db.entity.TrackEntity
+import com.hfad.playlistmaker.data.db.entity.PlaylistWithTracksEntity
 import com.hfad.playlistmaker.domian.db.PlaylistRepository
 import com.hfad.playlistmaker.domian.models.Playlist
+import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
 import com.hfad.playlistmaker.domian.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-private fun PlaylistEntity.toPlaylist() = Playlist(
+private fun PlaylistWithTracksEntity.toPlaylistWithTracks() = PlaylistWithTracks(
     name = name,
     description = description,
-    photoUrl = photoUrl
+    photoUrl = photoUrl,
+    tracks = tracks.map { it.toTrack() }
 )
 
 private fun Playlist.toPlaylistEntity() = PlaylistEntity(
@@ -64,11 +66,12 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    override suspend fun getPlaylist(): Flow<List<Playlist>> {
+    override suspend fun getPlaylist(): Flow<List<PlaylistWithTracks>> {
         return appDatabase.playlistDao()
             .getPlaylist().map { entities ->
-                entities.map { it.toPlaylist() }
-            }.distinctUntilChanged()
+                entities.map { it.toPlaylistWithTracks() }
+            }
+            .distinctUntilChanged()
     }
 
     override suspend fun addTrackToPlaylist(track: Track, time: Long, playlistName: String) {
@@ -76,5 +79,12 @@ class PlaylistRepositoryImpl(
             val entity = track.toPlaylistTrackEntity(time, playlistName)
             playlistTrackDao.addTrackToPlaylist(entity)
         }
+    }
+
+    override suspend fun getTrackFromPlaylist(
+        trackId: Long,
+        playlistName: String
+    ): List<PlaylistTrackEntity> {
+        return appDatabase.playlistTrackDao().getTrackFromPlaylist(trackId, playlistName)
     }
 }

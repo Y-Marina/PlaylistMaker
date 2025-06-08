@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.models.Playlist
+import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.ui.common.getParcelableCompatWrapper
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -22,12 +23,13 @@ data class CreatePlaylistUiState(
     val photoUri: Uri? = null
 ) {
     val isCreateButtonEnabled by lazy {
-        !name.isNullOrEmpty()
+        name.isNotEmpty()
     }
 }
 
 sealed class CreatePlaylistCommand {
     data class NavigateToBackWithSuccess(val result: CreatePlaylistResult) : CreatePlaylistCommand()
+    data class NavigateToPlay(val result: AddPlaylistResult) : CreatePlaylistCommand()
     data object ShowWarning : CreatePlaylistCommand()
     data object NavigateToBack : CreatePlaylistCommand()
 }
@@ -62,6 +64,12 @@ class CreatePlaylistViewModel(
     private val commandLiveData = SingleLiveEvent<CreatePlaylistCommand>()
     fun observeCommand(): LiveData<CreatePlaylistCommand> = commandLiveData
 
+    private var track: Track? = null
+
+    fun setTrack(track: Track?) {
+        this.track = track
+    }
+
     fun setPlaylistPhoto(uri: Uri) {
         stateLiveData.postValue(stateLiveData.value?.copy(photoUri = uri))
     }
@@ -80,6 +88,7 @@ class CreatePlaylistViewModel(
         state?.let { playlist ->
             viewModelScope.launch {
                 try {
+
                     playlistInteractor.addPlaylist(
                         Playlist(
                             name = playlist.name,
@@ -87,15 +96,35 @@ class CreatePlaylistViewModel(
                             photoUrl = playlist.photoUri?.path
                         )
                     )
-                    commandLiveData.postValue(
-                        CreatePlaylistCommand.NavigateToBackWithSuccess(
-                            CreatePlaylistResult(
-                                playlist.name
+
+                    if (track == null) {
+                        commandLiveData.postValue(
+                            CreatePlaylistCommand.NavigateToBackWithSuccess(
+                                CreatePlaylistResult(
+                                    playlist.name
+                                )
                             )
                         )
-                    )
+                    } else {
+                        track?.let {
+                            playlistInteractor.addTrackToPlaylist(
+                                it,
+                                java.time.Instant.now().epochSecond,
+                                playlist.name
+                            )
+                        }
+
+                        commandLiveData.postValue(
+                            CreatePlaylistCommand.NavigateToPlay(
+                                AddPlaylistResult(
+                                    true,
+                                    playlist.name
+                                )
+                            )
+                        )
+                    }
                 } catch (e: Exception) {
-                    println("ефк")
+                    e.printStackTrace()
                 }
             }
         }
@@ -105,8 +134,8 @@ class CreatePlaylistViewModel(
         val uiState = stateLiveData.value
         if (
             uiState?.name?.isEmpty() != true
-            || uiState?.photoUri != null
-            || uiState?.description?.isEmpty() != true
+            || uiState.photoUri != null
+            || uiState.description.isNullOrEmpty() != true
         ) {
             commandLiveData.postValue(CreatePlaylistCommand.ShowWarning)
         } else {
