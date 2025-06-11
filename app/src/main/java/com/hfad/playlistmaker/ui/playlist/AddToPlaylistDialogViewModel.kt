@@ -56,7 +56,7 @@ class AddToPlaylistDialogViewModel(
 ) : ViewModel(), PlaylistAdapter.Callback {
     init {
         viewModelScope.launch {
-            playlistInteractor.getPlaylist()
+            playlistInteractor.getAllPlaylists()
                 .distinctUntilChanged()
                 .collect { playlists ->
                     playlistStateLiveData

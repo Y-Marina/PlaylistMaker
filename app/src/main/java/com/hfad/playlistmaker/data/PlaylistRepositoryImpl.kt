@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 private fun PlaylistWithTracksEntity.toPlaylistWithTracks() = PlaylistWithTracks(
-    name = name,
-    description = description,
-    photoUrl = photoUrl,
+    name = playlistEntity.name,
+    description = playlistEntity.description,
+    photoUrl = playlistEntity.photoUrl,
     tracks = tracks.map { it.toTrack() }
 )
 
@@ -66,7 +66,7 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    override suspend fun getPlaylist(): Flow<List<PlaylistWithTracks>> {
+    override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
         return appDatabase.playlistDao()
             .getPlaylist().map { entities ->
                 entities.map { it.toPlaylistWithTracks() }

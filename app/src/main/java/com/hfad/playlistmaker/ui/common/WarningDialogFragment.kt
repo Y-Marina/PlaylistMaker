@@ -9,6 +9,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.hfad.playlistmaker.R
 import kotlinx.parcelize.Parcelize
 
 sealed class WarningDialogResult : Parcelable {
@@ -37,7 +38,7 @@ class WarningDialogFragment : DialogFragment() {
     private val args by navArgs<WarningDialogFragmentArgs>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext())
+        return MaterialAlertDialogBuilder(requireContext(), R.style.MyThemeOverlay_MaterialAlertDialog)
             .setTitle(args.title)
             .setMessage(args.message)
             .setNeutralButton(args.neutralButton) { _, _ ->

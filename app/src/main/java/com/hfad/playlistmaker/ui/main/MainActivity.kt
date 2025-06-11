@@ -11,6 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.ActivityMainBinding
+import com.hfad.playlistmaker.ui.common.WarningDialogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -39,13 +40,17 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
+                R.id.addToPlaylistDialogFragment,
                 R.id.create_playlist_fragment,
+                R.id.warning_dialog,
                 R.id.play_fragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
+                    binding.bottomNavView.visibility = View.GONE
                 }
 
                 else -> {
                     binding.bottomNavigationView.visibility = View.VISIBLE
+                    binding.bottomNavView.visibility = View.VISIBLE
                 }
             }
         }

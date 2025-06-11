@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistRepository {
     suspend fun addPlaylist(playlist: Playlist)
 
-    suspend fun getPlaylist(): Flow<List<PlaylistWithTracks>>
+    suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>>
 
     suspend fun addTrackToPlaylist(track: Track, time: Long, playlistName: String)
 

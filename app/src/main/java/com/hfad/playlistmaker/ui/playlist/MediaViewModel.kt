@@ -49,7 +49,7 @@ class MediaViewModel(
         }
 
         viewModelScope.launch {
-            playlistInteractor.getPlaylist()
+            playlistInteractor.getAllPlaylists()
                 .distinctUntilChanged()
                 .collect { playlists ->
                     playlistStateLiveData

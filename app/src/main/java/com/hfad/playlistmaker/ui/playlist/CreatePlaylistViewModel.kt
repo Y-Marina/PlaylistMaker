@@ -12,6 +12,7 @@ import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.models.Playlist
 import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.domian.storage.PlaylistImageRepository
 import com.hfad.playlistmaker.ui.common.getParcelableCompatWrapper
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -85,23 +86,22 @@ class CreatePlaylistViewModel(
     fun onCreateButtonClicked() {
         val state = stateLiveData.value
 
-        state?.let { playlist ->
+        state?.let { prefState ->
             viewModelScope.launch {
                 try {
-
                     playlistInteractor.addPlaylist(
-                        Playlist(
-                            name = playlist.name,
-                            description = playlist.description,
-                            photoUrl = playlist.photoUri?.path
-                        )
+                        playlist = Playlist(
+                            name = prefState.name,
+                            description = prefState.description
+                        ),
+                        photoUrl = stateLiveData.value?.photoUri.toString()
                     )
 
                     if (track == null) {
                         commandLiveData.postValue(
                             CreatePlaylistCommand.NavigateToBackWithSuccess(
                                 CreatePlaylistResult(
-                                    playlist.name
+                                    prefState.name
                                 )
                             )
                         )
@@ -110,7 +110,7 @@ class CreatePlaylistViewModel(
                             playlistInteractor.addTrackToPlaylist(
                                 it,
                                 java.time.Instant.now().epochSecond,
-                                playlist.name
+                                prefState.name
                             )
                         }
 
@@ -118,7 +118,7 @@ class CreatePlaylistViewModel(
                             CreatePlaylistCommand.NavigateToPlay(
                                 AddPlaylistResult(
                                     true,
-                                    playlist.name
+                                    prefState.name
                                 )
                             )
                         )

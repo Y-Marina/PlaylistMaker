@@ -2,6 +2,7 @@ package com.hfad.playlistmaker.ui.playlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -80,7 +81,7 @@ class PlaylistAdapter(val callback: Callback) :
                 .getQuantityString(R.plurals.track_count, item.trackCount, item.trackCount)
             Glide
                 .with(context)
-                .load(item.photoUrl)
+                .load(item.photoUrl?.toUri())
                 .centerCrop()
                 .transition(withCrossFade())
                 .transform(RoundedCorners(dpToPx(2f, context)))
@@ -112,7 +113,7 @@ class PlaylistAdapter(val callback: Callback) :
                 .load(item.photoUrl)
                 .centerCrop()
                 .transition(withCrossFade())
-                .transform(RoundedCorners(dpToPx(2f, context)))
+                .transform(RoundedCorners(dpToPx(4f, context)))
                 .placeholder(R.drawable.ic_placeholder)
                 .into(posterIm)
         }
