@@ -21,6 +21,7 @@ data class PlayUiState(
 )
 
 sealed class PlayCommand {
+    data class AddPlaylist(val track: Track) : PlayCommand()
     data object NavigateBack : PlayCommand()
 }
 
@@ -39,6 +40,8 @@ class PlayViewModel(
     companion object {
         private const val TIMER_DEBOUNCE = 300L
     }
+
+    private lateinit var track: Track
 
     private var timeJob: Job? = null
 
@@ -111,6 +114,7 @@ class PlayViewModel(
             if (track == null) {
                 commandLiveData.postValue(PlayCommand.NavigateBack)
             } else {
+                this.track = track
                 viewModelScope.launch {
                     val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(track.trackId) }
                     stateLiveData.postValue(stateLiveData.value?.copy(track = track.copy(isFavorite = trackIsFavoriteDeferred.await().isNotEmpty())))
@@ -128,6 +132,10 @@ class PlayViewModel(
         super.onCleared()
     }
 
+    fun onAddPlaylistClicked() {
+        commandLiveData.postValue(PlayCommand.AddPlaylist(track = track))
+    }
+
     fun onFavoriteClicked(isChecked: Boolean) {
         val track = stateLiveData.value?.track
         if (track == null) return
@@ -139,5 +147,9 @@ class PlayViewModel(
                 favTracksInteractor.deleteFavTrack(track.trackId)
             }
         }
+    }
+
+    fun onBackClicked() {
+        commandLiveData.postValue(PlayCommand.NavigateBack)
     }
 }

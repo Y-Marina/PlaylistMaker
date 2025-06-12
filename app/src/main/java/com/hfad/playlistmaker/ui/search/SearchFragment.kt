@@ -10,9 +10,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.hfad.playlistmaker.databinding.FragmentSearchBinding
-import com.hfad.playlistmaker.ui.playback.PlayActivity
-import com.hfad.playlistmaker.ui.playback.TRACK_ITEM
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -79,12 +78,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun handleCommand(command: SearchCommand) {
+        val navController = findNavController()
         when (command) {
-            is SearchCommand.NavigateToPlayer -> {
-                val playIntent = Intent(requireContext(), PlayActivity::class.java)
-                playIntent.putExtra(TRACK_ITEM, command.track)
-                startActivity(playIntent)
-            }
+            is SearchCommand.NavigateToPlayer -> navController.navigate(
+                SearchFragmentDirections.toPlayFragment(command.track)
+            )
         }
     }
 }

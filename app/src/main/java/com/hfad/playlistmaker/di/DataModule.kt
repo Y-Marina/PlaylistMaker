@@ -15,6 +15,11 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+
+object PreferenceFiles {
+    const val DIR_NAME = "photos"
+}
 
 val dataModule = module {
     single<ITunesApi> {
@@ -45,5 +50,11 @@ val dataModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
+    }
+
+    single { androidContext().contentResolver }
+
+    single {
+        File(androidContext().filesDir, PreferenceFiles.DIR_NAME).apply { mkdirs() }
     }
 }
