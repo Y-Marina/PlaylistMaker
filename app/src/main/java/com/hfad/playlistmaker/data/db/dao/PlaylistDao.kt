@@ -17,4 +17,8 @@ interface PlaylistDao {
     @Transaction
     @Query("SELECT name, description, photo_url FROM playlist_table")
     fun getPlaylist(): Flow<List<PlaylistWithTracksEntity>>
+
+    @Transaction
+    @Query("SELECT name, description, photo_url FROM playlist_table WHERE name = :name LIMIT 1")
+    fun getPlaylistByName(name: String): Flow<PlaylistWithTracksEntity>
 }

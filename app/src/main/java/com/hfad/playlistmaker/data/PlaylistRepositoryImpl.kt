@@ -14,10 +14,14 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 private fun PlaylistWithTracksEntity.toPlaylistWithTracks() = PlaylistWithTracks(
-    name = playlistEntity.name,
-    description = playlistEntity.description,
-    photoUrl = playlistEntity.photoUrl,
+    playlist = playlistEntity.toPlaylist(),
     tracks = tracks.map { it.toTrack() }
+)
+
+private fun PlaylistEntity.toPlaylist() = Playlist(
+    name = name,
+    description = description,
+    photoUrl = photoUrl
 )
 
 private fun Playlist.toPlaylistEntity() = PlaylistEntity(
@@ -66,6 +70,10 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks> {
+        return appDatabase.playlistDao().getPlaylistByName(name).map { it.toPlaylistWithTracks() }
+    }
+
     override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
         return appDatabase.playlistDao()
             .getPlaylist().map { entities ->
@@ -86,5 +94,9 @@ class PlaylistRepositoryImpl(
         playlistName: String
     ): List<PlaylistTrackEntity> {
         return appDatabase.playlistTrackDao().getTrackFromPlaylist(trackId, playlistName)
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
+        return appDatabase.playlistTrackDao().deleteTrackFromPlaylist(trackId, playlistName)
     }
 }

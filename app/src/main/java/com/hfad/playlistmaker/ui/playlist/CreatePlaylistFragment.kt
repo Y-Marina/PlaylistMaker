@@ -1,11 +1,6 @@
 package com.hfad.playlistmaker.ui.playlist
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,8 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -23,11 +16,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.FragmentCreatePlaylistBinding
+import com.hfad.playlistmaker.ui.common.DialogResult
 import com.hfad.playlistmaker.ui.common.WarningDialogResult
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
-import java.util.UUID
 
 class CreatePlaylistFragment : Fragment() {
     companion object {
@@ -53,13 +44,14 @@ class CreatePlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setFragmentResultListener(closeDialogKey) { _, bundle ->
-            val result = WarningDialogResult.fromBundle(bundle)
-            when (result) {
-                is WarningDialogResult.Success -> {
+            val warningDialogResult = WarningDialogResult.fromBundle(bundle)
+            when (warningDialogResult.result) {
+                DialogResult.Ok -> {
                     findNavController().popBackStack()
                 }
 
-                is WarningDialogResult.Cancel -> {
+                DialogResult.Cancel,
+                DialogResult.Negative -> {
                     // nothing
                 }
             }
@@ -84,9 +76,6 @@ class CreatePlaylistFragment : Fragment() {
 
         binding.choosePoster.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//            val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-//            val file = File(filePath, "first_cover.jpg")
-//            binding.choosePosterIm.setImageURI(file.toUri())
         }
 
         val nameTextWatcher = object : TextWatcher {
@@ -122,11 +111,13 @@ class CreatePlaylistFragment : Fragment() {
             viewModel.onCreateButtonClicked()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                viewModel.onBackClicked()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.onBackClicked()
+                }
+            })
     }
 
     private fun handleUiState(state: CreatePlaylistUiState) {

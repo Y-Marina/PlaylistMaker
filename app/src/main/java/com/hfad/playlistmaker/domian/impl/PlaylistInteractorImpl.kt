@@ -1,6 +1,5 @@
 package com.hfad.playlistmaker.domian.impl
 
-import android.net.Uri
 import com.hfad.playlistmaker.data.db.entity.PlaylistTrackEntity
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.db.PlaylistRepository
@@ -20,12 +19,19 @@ class PlaylistInteractorImpl(
         playlistRepository.addPlaylist(playlist.copy(photoUrl = fileName))
     }
 
+    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks> {
+        return playlistRepository.getPlaylistByName(name)
+    }
+
     override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
         return playlistRepository.getAllPlaylists().map { listOfPlaylists ->
-            listOfPlaylists.map { playlist ->
-                playlist.copy(photoUrl = playlist.photoUrl?.let {
-                    "file://${playlistImageStorage.getImage(playlist.photoUrl)}"
-                })
+            listOfPlaylists.map { playlistWithTracks ->
+                val photoUrl = playlistWithTracks.playlist.photoUrl?.let {
+                    "file://${playlistImageStorage.getImage(it)}"
+                }
+                playlistWithTracks.copy(
+                    playlist = playlistWithTracks.playlist.copy(photoUrl = photoUrl)
+                )
             }
         }
     }
@@ -39,5 +45,9 @@ class PlaylistInteractorImpl(
         playlistName: String
     ): List<PlaylistTrackEntity> {
         return playlistRepository.getTrackFromPlaylist(trackId, playlistName)
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
+        return playlistRepository.deleteTrackFromPlaylist(trackId, playlistName)
     }
 }
