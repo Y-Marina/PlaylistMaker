@@ -10,6 +10,7 @@ import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
 import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.ui.search.SearchAdapter
 import com.hfad.playlistmaker.ui.search.SearchItemUiModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,7 @@ sealed class PlaylistCommand {
     data class NavigateToShare(val playlistWithTracks: PlaylistWithTracks) : PlaylistCommand()
     data object ShowToast : PlaylistCommand()
     data class NavigateToMenu(val playlistName: String) : PlaylistCommand()
+    data object NavigateToMediaFragment: PlaylistCommand()
 }
 
 class PlaylistViewModel(
@@ -51,7 +53,11 @@ class PlaylistViewModel(
                 playlistInteractor.getPlaylistByName(playlistName)
                     .distinctUntilChanged()
                     .collect { playlistWithTracks ->
-                        stateLiveData.postValue(stateLiveData.value?.copy(playlistWithTracks = playlistWithTracks))
+                        if (playlistWithTracks != null) {
+                            stateLiveData.postValue(stateLiveData.value?.copy(playlistWithTracks = playlistWithTracks))
+                        } else {
+                            commandLiveData.postValue(PlaylistCommand.NavigateBack)
+                        }
                     }
             }
         }

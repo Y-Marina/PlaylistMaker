@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -14,13 +16,22 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.databinding.FragmentMenuBottomSheetBinding
+import com.hfad.playlistmaker.domian.models.Playlist
 import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
+import com.hfad.playlistmaker.domian.models.Track
+import com.hfad.playlistmaker.ui.common.DialogResult
+import com.hfad.playlistmaker.ui.common.WarningDialogResult
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.getValue
 
 class MenuBottomSheet : BottomSheetDialogFragment() {
+    companion object {
+        private val className = PlaylistFragment::class.qualifiedName
+        private val deleteDialogKey = "${className}.deleteDialogKey"
+    }
+
     private val args by navArgs<MenuBottomSheetArgs>()
 
     private lateinit var binding: FragmentMenuBottomSheetBinding
@@ -40,14 +51,21 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setFragmentResultListener(deleteDialogKey) { _, bundle ->
+            val warningDialogResult = WarningDialogResult.fromBundle(bundle)
+            if (warningDialogResult.result == DialogResult.Ok ) {
+                viewModel.onDeletePlaylist()
+            }
+        }
+
         viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
         viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
         viewModel.setPlaylist(args.playlistName)
 
-
-
         binding.shareTv.setOnClickListener { viewModel.onShareClick() }
+
+        binding.deletePlaylistTv.setOnClickListener { viewModel.onDeleteMenuClicked() }
     }
 
     private fun handleUiState(state: MenuBottomSheetUiState) {
@@ -70,7 +88,10 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun handleCommand(command: MenuCommand) {
+        val navController = findNavController()
         when (command) {
+            is MenuCommand.NavigateToBack -> navController.popBackStack()
+
             is MenuCommand.NavigateToShare -> share(command.playlistWithTracks)
 
             is MenuCommand.ShowToast -> Toast.makeText(
@@ -80,7 +101,15 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
 
             is MenuCommand.NavigateToChangeInfo -> {}
 
-            is MenuCommand.NavigateToDeletePlaylist -> {}
+            is MenuCommand.NavigateToDeletePlaylist -> navController.navigate(
+                MenuBottomSheetDirections.toWarningDialog(
+                    resultKey = deleteDialogKey,
+                    title = getString(R.string.dialog_message_delete_playlist),
+                    message = "",
+                    positiveButton = getString(R.string.dialog_positive_button_delete),
+                    neutralButton = getString(R.string.dialog_neutral_button_delete)
+                )
+            )
         }
     }
 

@@ -131,6 +131,11 @@
         <action
             android:id="@+id/action_to_menu_bottom_sheet"
             app:destination="@id/menu_dialog_fragment" />
+        <action
+            android:id="@+id/to_media_fragment"
+            app:destination="@id/media_fragment"
+            app:popUpTo="@id/media_fragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <dialog android:id="@+id/menu_dialog_fragment"

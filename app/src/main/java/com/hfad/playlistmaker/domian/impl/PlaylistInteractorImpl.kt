@@ -19,10 +19,10 @@ class PlaylistInteractorImpl(
         playlistRepository.addPlaylist(playlist.copy(photoUrl = fileName))
     }
 
-    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks> {
+    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks?> {
         return playlistRepository.getPlaylistByName(name).map { playlistWithTracks ->
-            val photoUrl = getPhotoUrl(playlistWithTracks.playlist.photoUrl)
-            playlistWithTracks.copy(
+            val photoUrl = getPhotoUrl(playlistWithTracks?.playlist?.photoUrl)
+            playlistWithTracks?.copy(
                 playlist = playlistWithTracks.playlist.copy(photoUrl = photoUrl)
             )
         }
@@ -52,6 +52,10 @@ class PlaylistInteractorImpl(
 
     override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
         return playlistRepository.deleteTrackFromPlaylist(trackId, playlistName)
+    }
+
+    override suspend fun deletePlaylist(playlistName: String) {
+        playlistRepository.deletePlaylist(playlistName)
     }
 
     suspend fun getPhotoUrl(fileName: String?): String {

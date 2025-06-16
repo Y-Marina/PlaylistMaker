@@ -71,14 +71,15 @@
     </plurals>
 
     <string name="dialog_message_delete_track">Хотите удалить трек?</string>
-    <string name="dialog_neutral_button_delete_track">НЕТ</string>
-    <string name="dialog_positive_button_delete_track">ДА</string>
+    <string name="dialog_message_delete_playlist">Хотите удалить плейлист?</string>
+    <string name="dialog_neutral_button_delete">НЕТ</string>
+    <string name="dialog_positive_button_delete">ДА</string>
 
     <string name="empty_track_list_toast">В этом плейлисте нет списка треков, которым можно поделиться</string>
+
+    <string name="empty_playlist">Плейлист не содержит треков</string>
 
     <string name="share">Поделиться</string>
     <string name="edit_info">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

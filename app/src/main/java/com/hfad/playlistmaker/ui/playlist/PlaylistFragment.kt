@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
@@ -108,6 +109,9 @@ class PlaylistFragment : Fragment() {
                     state.playlistWithTracks.trackCount
                 )
 
+            binding.emptyTrack.isVisible = state.trackItem.isEmpty()
+            binding.contentList.isVisible = state.trackItem.isNotEmpty()
+
             adapter.data = state.trackItem
             adapter.notifyDataSetChanged()
 
@@ -130,8 +134,8 @@ class PlaylistFragment : Fragment() {
                     resultKey = deleteDialogKey,
                     title = getString(R.string.dialog_message_delete_track),
                     message = "",
-                    positiveButton = getString(R.string.dialog_positive_button_delete_track),
-                    neutralButton = getString(R.string.dialog_neutral_button_delete_track),
+                    positiveButton = getString(R.string.dialog_positive_button_delete),
+                    neutralButton = getString(R.string.dialog_neutral_button_delete),
                     extra = command.track
                 )
             )
@@ -145,6 +149,10 @@ class PlaylistFragment : Fragment() {
 
             is PlaylistCommand.NavigateToMenu -> navController.navigate(
                 PlaylistFragmentDirections.actionToMenuBottomSheet(command.playlistName)
+            )
+
+            is PlaylistCommand.NavigateToMediaFragment -> navController.navigate(
+                PlaylistFragmentDirections.toMediaFragment()
             )
         }
     }

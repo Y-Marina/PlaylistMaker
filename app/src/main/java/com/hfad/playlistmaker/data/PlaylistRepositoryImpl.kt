@@ -70,8 +70,8 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks> {
-        return appDatabase.playlistDao().getPlaylistByName(name).map { it.toPlaylistWithTracks() }
+    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks?> {
+        return appDatabase.playlistDao().getPlaylistByName(name).map { it?.toPlaylistWithTracks() }
     }
 
     override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
@@ -98,5 +98,12 @@ class PlaylistRepositoryImpl(
 
     override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
         return appDatabase.playlistTrackDao().deleteTrackFromPlaylist(trackId, playlistName)
+    }
+
+    override suspend fun deletePlaylist(playlistName: String) {
+        appDatabase.withTransaction {
+            playlistTrackDao.deleteTrackFromPlaylist(playlistName)
+            playlistDao.deletePlaylist(playlistName)
+        }
     }
 }

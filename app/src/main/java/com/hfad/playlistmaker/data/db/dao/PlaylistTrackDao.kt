@@ -19,4 +19,7 @@ interface PlaylistTrackDao {
 
     @Query("DELETE FROM playlist_track_table WHERE track_id = :trackId AND playlist_name = :playlistName")
     suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String)
+
+    @Query("DELETE FROM playlist_track_table WHERE playlist_name = :playlistName")
+    suspend fun deleteTrackFromPlaylist(playlistName: String)
 }

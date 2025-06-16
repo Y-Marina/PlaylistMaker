@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
+import com.hfad.playlistmaker.domian.models.Playlist
 import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ data class MenuBottomSheetUiState(
 }
 
 sealed class MenuCommand {
+    data object NavigateToBack: MenuCommand()
     data class NavigateToShare(val playlistWithTracks: PlaylistWithTracks) : MenuCommand()
     data object ShowToast : MenuCommand()
     data object NavigateToChangeInfo : MenuCommand()
@@ -51,6 +53,19 @@ class MenuBottomSheetViewModel(
                 commandLiveData.postValue(MenuCommand.ShowToast)
             } else {
                 commandLiveData.postValue(MenuCommand.NavigateToShare(it))
+            }
+        }
+    }
+
+    fun onDeleteMenuClicked() {
+        commandLiveData.postValue(MenuCommand.NavigateToDeletePlaylist)
+    }
+
+    fun onDeletePlaylist() {
+        commandLiveData.postValue(MenuCommand.NavigateToBack)
+        viewModelScope.launch {
+            stateLiveData.value?.playlistWithTracks?.playlist?.name?.let {
+                playlistInteractor.deletePlaylist(it)
             }
         }
     }
