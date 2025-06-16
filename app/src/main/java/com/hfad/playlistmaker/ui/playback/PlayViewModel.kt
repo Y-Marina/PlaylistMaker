@@ -33,7 +33,6 @@ enum class PlayState {
 }
 
 class PlayViewModel(
-    private val historyInteractor: HistoryInteractor,
     private val mediaPlayer: MediaPlayer,
     private val favTracksInteractor: FavTracksInteractor
 ) : ViewModel() {
@@ -116,8 +115,15 @@ class PlayViewModel(
             } else {
                 this.track = track
                 viewModelScope.launch {
-                    val trackIsFavoriteDeferred = viewModelScope.async { favTracksInteractor.getFavTrack(track.trackId) }
-                    stateLiveData.postValue(stateLiveData.value?.copy(track = track.copy(isFavorite = trackIsFavoriteDeferred.await().isNotEmpty())))
+                    val trackIsFavoriteDeferred =
+                        viewModelScope.async { favTracksInteractor.getFavTrack(track.trackId) }
+                    stateLiveData.postValue(
+                        stateLiveData.value?.copy(
+                            track = track.copy(
+                                isFavorite = trackIsFavoriteDeferred.await().isNotEmpty()
+                            )
+                        )
+                    )
                     preparePlayer(track)
                 }
             }

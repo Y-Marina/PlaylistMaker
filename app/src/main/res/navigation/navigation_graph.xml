@@ -128,5 +128,17 @@
         <argument
             android:name="playlistName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_to_menu_bottom_sheet"
+            app:destination="@id/menu_dialog_fragment" />
     </fragment>
+
+    <dialog android:id="@+id/menu_dialog_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.MenuBottomSheet"
+        android:label="fragment_menu_bottom_sheet"
+        tools:layout="@layout/fragment_menu_bottom_sheet">
+        <argument
+            android:name="playlistName"
+            app:argType="string" />
+    </dialog>
 </navigation>

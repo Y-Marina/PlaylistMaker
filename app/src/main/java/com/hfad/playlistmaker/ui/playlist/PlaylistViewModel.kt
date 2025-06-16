@@ -26,13 +26,15 @@ data class GetPlaylistUiState(
 sealed class PlaylistCommand {
     data object NavigateBack : PlaylistCommand()
     data class NavigateToPlayer(val track: Track) : PlaylistCommand()
-    data class ShowDeleteTrackDialog(val track: Track): PlaylistCommand()
+    data class ShowDeleteTrackDialog(val track: Track) : PlaylistCommand()
+    data class NavigateToShare(val playlistWithTracks: PlaylistWithTracks) : PlaylistCommand()
+    data object ShowToast : PlaylistCommand()
+    data class NavigateToMenu(val playlistName: String) : PlaylistCommand()
 }
 
 class PlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
-): ViewModel(), SearchAdapter.Callback {
-
+) : ViewModel(), SearchAdapter.Callback {
     private val stateLiveData = MutableLiveData(GetPlaylistUiState())
     fun observeState(): LiveData<GetPlaylistUiState> = stateLiveData
 
@@ -44,9 +46,7 @@ class PlaylistViewModel(
     }
 
     fun setPlaylistName(playlistName: String?) {
-
         if (playlistName != null) {
-
             viewModelScope.launch {
                 playlistInteractor.getPlaylistByName(playlistName)
                     .distinctUntilChanged()
@@ -54,7 +54,6 @@ class PlaylistViewModel(
                         stateLiveData.postValue(stateLiveData.value?.copy(playlistWithTracks = playlistWithTracks))
                     }
             }
-
         }
     }
 
@@ -72,5 +71,24 @@ class PlaylistViewModel(
                 playlistInteractor.deleteTrackFromPlaylist(track.trackId, name)
             }
         }
+    }
+
+    fun onShareClick() {
+        val playlist = stateLiveData.value?.playlistWithTracks
+        playlist?.let {
+            if (playlist.tracks.isEmpty() == true) {
+                commandLiveData.postValue(PlaylistCommand.ShowToast)
+            } else {
+                commandLiveData.postValue(PlaylistCommand.NavigateToShare(it))
+            }
+        }
+    }
+
+    fun onMenuClick() {
+        val playlist = stateLiveData.value?.playlistWithTracks
+        playlist?.let {
+            commandLiveData.postValue(PlaylistCommand.NavigateToMenu(it.playlist.name))
+        }
+
     }
 }
