@@ -26,6 +26,7 @@ private fun PlaylistEntity.toPlaylist() = Playlist(
 )
 
 private fun Playlist.toPlaylistEntity() = PlaylistEntity(
+    id = id,
     name = name,
     description = description,
     photoUrl = photoUrl
@@ -111,5 +112,9 @@ class PlaylistRepositoryImpl(
             playlistTrackDao.deleteTrackFromPlaylist(playlistId)
             playlistDao.deletePlaylist(playlistId)
         }
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        appDatabase.playlistDao().updatePlaylist(playlist.toPlaylistEntity())
     }
 }

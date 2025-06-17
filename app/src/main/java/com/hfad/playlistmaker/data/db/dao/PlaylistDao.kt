@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.hfad.playlistmaker.data.db.entity.PlaylistEntity
 import com.hfad.playlistmaker.data.db.entity.PlaylistWithTracksEntity
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,7 @@ interface PlaylistDao {
     @Query("DELETE FROM playlist_table WHERE id = :playlistId")
     fun deletePlaylist(playlistId: Long)
 
-//    @Query("UPDATE FROM playlist_table WHERE name = :name, description = :description, ")
-//    fun updatePlaylist(name: String, descriptor: String, photoUrl: String)
+    @Transaction
+    @Update
+    suspend fun updatePlaylist(playlist: PlaylistEntity)
 }

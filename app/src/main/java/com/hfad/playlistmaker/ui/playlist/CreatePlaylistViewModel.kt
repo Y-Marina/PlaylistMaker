@@ -21,6 +21,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 data class CreatePlaylistUiState(
+    val id: Long = 0L,
     val name: String = "",
     val description: String? = null,
     val photoUri: Uri? = null,
@@ -93,6 +94,7 @@ class CreatePlaylistViewModel(
                     .collect { playlist ->
                         stateLiveData.postValue(
                             stateLiveData.value?.copy(
+                                id = playlist.playlist.id,
                                 name = playlist.playlist.name,
                                 description = playlist.playlist.description,
                                 photoUri = playlist.playlist.photoUrl?.toUri(),
@@ -123,42 +125,55 @@ class CreatePlaylistViewModel(
         state?.let { prefState ->
             viewModelScope.launch {
                 try {
-                    val playlist = playlistInteractor.addPlaylist(
-                        playlist = Playlist(
-                            id = 0L,
-                            name = prefState.name,
-                            description = prefState.description
-                        ),
-                        photoUrl = stateLiveData.value?.photoUri?.toString()
-                    )
-
-                    if (track == null) {
-                        commandLiveData.postValue(
-                            CreatePlaylistCommand.NavigateToBackWithSuccess(
-                                CreatePlaylistResult(
-                                    prefState.name
-                                )
-                            )
+                    val editedPlaylistId = stateLiveData.value?.editedPlaylistId
+                    if (editedPlaylistId != null && editedPlaylistId != 0L) {
+                        playlistInteractor.updatePlaylist(
+                            playlist = Playlist(
+                                id = prefState.id,
+                                name = prefState.name,
+                                description = prefState.description
+                            ),
+                            photoUrl = stateLiveData.value?.photoUri?.toString()
                         )
+                        commandLiveData.postValue(CreatePlaylistCommand.NavigateToBack)
                     } else {
-                        if (playlist != null) {
-                            track?.let {
-                                playlistInteractor.addTrackToPlaylist(
-                                    track = it,
-                                    time = java.time.Instant.now().epochSecond,
-                                    playlistId = playlist.id
-                                )
-                            }
-                        }
+                        val playlist = playlistInteractor.addPlaylist(
+                            playlist = Playlist(
+                                id = 0L,
+                                name = prefState.name,
+                                description = prefState.description
+                            ),
+                            photoUrl = stateLiveData.value?.photoUri?.toString()
+                        )
 
-                        commandLiveData.postValue(
-                            CreatePlaylistCommand.NavigateToPlay(
-                                AddPlaylistResult(
-                                    true,
-                                    prefState.name
+                        if (track == null) {
+                            commandLiveData.postValue(
+                                CreatePlaylistCommand.NavigateToBackWithSuccess(
+                                    CreatePlaylistResult(
+                                        prefState.name
+                                    )
                                 )
                             )
-                        )
+                        } else {
+                            if (playlist != null) {
+                                track?.let {
+                                    playlistInteractor.addTrackToPlaylist(
+                                        track = it,
+                                        time = java.time.Instant.now().epochSecond,
+                                        playlistId = playlist.id
+                                    )
+                                }
+                            }
+
+                            commandLiveData.postValue(
+                                CreatePlaylistCommand.NavigateToPlay(
+                                    AddPlaylistResult(
+                                        true,
+                                        prefState.name
+                                    )
+                                )
+                            )
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -170,9 +185,10 @@ class CreatePlaylistViewModel(
     fun onBackClicked() {
         val uiState = stateLiveData.value
         if (
-            uiState?.name?.isEmpty() != true
+            uiState?.editedPlaylistId == 0L && 
+            (uiState?.name?.isEmpty() != true
             || uiState.photoUri != null
-            || uiState.description.isNullOrEmpty() != true
+            || uiState.description.isNullOrEmpty() != true)
         ) {
             commandLiveData.postValue(CreatePlaylistCommand.ShowWarning)
         } else {

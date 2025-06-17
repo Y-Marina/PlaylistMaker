@@ -63,7 +63,16 @@ class PlaylistInteractorImpl(
         playlistRepository.deletePlaylist(playlistId)
     }
 
-    suspend fun getPhotoUrl(fileName: String?): String {
-        return "file://${playlistImageStorage.getImage(fileName)}"
+    suspend fun getPhotoUrl(fileName: String?): String? {
+        return if (fileName != null) {
+            "file://${playlistImageStorage.getImage(fileName)}"
+        } else {
+            null
+        }
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist, photoUrl: String?) {
+        val fileName = photoUrl?.let { playlistImageStorage.uploadImage(it) }
+        playlistRepository.updatePlaylist(playlist.copy(photoUrl = fileName))
     }
 }
