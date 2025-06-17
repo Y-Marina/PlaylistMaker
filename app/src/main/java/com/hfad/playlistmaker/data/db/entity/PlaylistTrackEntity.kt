@@ -43,6 +43,6 @@ data class PlaylistTrackEntity(
     @ColumnInfo(name = "add_time")
     val addTime: Long,
 
-    @ColumnInfo(name = "playlist_name")
-    val playlistName: String
+    @ColumnInfo(name = "playlist_id")
+    val playlistId: Long
 )

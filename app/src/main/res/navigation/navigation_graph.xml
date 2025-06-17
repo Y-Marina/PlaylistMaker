@@ -6,6 +6,10 @@
     app:startDestination="@id/media_fragment">
 
     <action
+        android:id="@+id/to_playlist_fragment"
+        app:destination="@+id/playlist_fragment" />
+
+    <action
         android:id="@+id/to_warning_dialog"
         app:destination="@id/warning_dialog" />
 
@@ -76,6 +80,10 @@
             android:name="track"
             app:argType="com.hfad.playlistmaker.domian.models.Track"
             app:nullable="true" />
+        <argument
+            android:name="playlistId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
 
     <dialog
@@ -96,6 +104,11 @@
         <argument
             android:name="neutral_button"
             app:argType="string" />
+        <argument
+            android:name="extra"
+            app:argType="com.hfad.playlistmaker.ui.common.WarningDialogExtra"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </dialog>
 
     <dialog
@@ -109,5 +122,34 @@
         <argument
             android:name="track"
             app:argType="com.hfad.playlistmaker.domian.models.Track" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/playlist_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.PlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <action
+            android:id="@+id/action_to_menu_bottom_sheet"
+            app:destination="@id/menu_dialog_fragment" />
+        <action
+            android:id="@+id/to_media_fragment"
+            app:destination="@id/media_fragment"
+            app:popUpTo="@id/media_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <dialog android:id="@+id/menu_dialog_fragment"
+        android:name="com.hfad.playlistmaker.ui.playlist.MenuBottomSheetFragment"
+        android:label="fragment_menu_bottom_sheet"
+        tools:layout="@layout/fragment_menu_bottom_sheet">
+        <argument
+            android:name="playlistId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </dialog>
 </navigation>

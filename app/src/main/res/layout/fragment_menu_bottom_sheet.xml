@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_bottom_sheet_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_to_black"
+    android:orientation="vertical"
+    tools:context=".ui.playlist.MenuBottomSheetFragment">
+
+    <ImageView
+        android:id="@+id/menu_drag_item_im"
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/ic_drag_item" />
+
+    <include
+        android:id="@+id/small_playlist_item"
+        layout="@layout/playlist_small_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/share_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="21dp"
+        android:text="@string/share"
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/edit_info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:paddingVertical="21dp"
+        android:paddingStart="18dp"
+        android:text="@string/edit_info"
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/delete_playlist_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:paddingVertical="21dp"
+        android:paddingStart="18dp"
+        android:text="@string/delete_playlist"
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
+</LinearLayout>

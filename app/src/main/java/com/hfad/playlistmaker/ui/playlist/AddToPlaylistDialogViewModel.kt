@@ -80,17 +80,20 @@ class AddToPlaylistDialogViewModel(
     override fun onItemClick(item: PlaylistItemUiModel) {
         viewModelScope.launch {
             val isHasTrack =
-                playlistInteractor.getTrackFromPlaylist(track.trackId, item.playlist.name)
+                playlistInteractor.getTrackFromPlaylist(
+                    track.trackId,
+                    item.playlistWithTracks.playlist.id
+                )
                     .isNotEmpty()
             if (!isHasTrack) {
                 playlistInteractor.addTrackToPlaylist(
                     track,
                     java.time.Instant.now().epochSecond,
-                    item.playlist.name
+                    item.playlistWithTracks.playlist.id
                 )
-                commandLiveData.postValue(DialogCommand.Success(name = item.playlist.name))
+                commandLiveData.postValue(DialogCommand.Success(name = item.playlistWithTracks.playlist.name))
             } else {
-                commandLiveData.postValue((DialogCommand.Error(name = item.playlist.name)))
+                commandLiveData.postValue((DialogCommand.Error(name = item.playlistWithTracks.playlist.name)))
             }
         }
     }

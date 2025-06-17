@@ -1,6 +1,7 @@
 package com.hfad.playlistmaker.domian.models
 
 import android.os.Parcelable
+import com.hfad.playlistmaker.ui.common.WarningDialogExtra
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -16,7 +17,7 @@ data class Track(
     val country: String,
     val previewUrl: String,
     val isFavorite: Boolean = false
-): Parcelable {
+): Parcelable, WarningDialogExtra {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
 
     fun getYear(): String {

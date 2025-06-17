@@ -66,6 +66,10 @@ class MediaFragment : Fragment() {
             is MediaCommand.NavigateToPlayer -> navController.navigate(
                 MediaFragmentDirections.toPlayFragment(command.track)
             )
+
+            is MediaCommand.NavigateToPlaylist -> navController.navigate(
+                MediaFragmentDirections.toPlaylistFragment(command.playlistId)
+            )
         }
     }
 

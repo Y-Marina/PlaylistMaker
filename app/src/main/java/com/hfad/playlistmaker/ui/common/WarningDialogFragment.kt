@@ -12,13 +12,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hfad.playlistmaker.R
 import kotlinx.parcelize.Parcelize
 
-sealed class WarningDialogResult : Parcelable {
-    @Parcelize
-    data object Success : WarningDialogResult()
-
-    @Parcelize
-    data object Cancel : WarningDialogResult()
-
+@Parcelize
+data class WarningDialogResult(
+    val result: DialogResult,
+    val extra: WarningDialogExtra? = null
+) : Parcelable {
     companion object {
         private val bundleKey = "${WarningDialogResult::class.qualifiedName}.bundle"
 
@@ -34,6 +32,12 @@ sealed class WarningDialogResult : Parcelable {
     }
 }
 
+enum class DialogResult {
+    Ok, Cancel, Negative
+}
+
+interface WarningDialogExtra: Parcelable
+
 class WarningDialogFragment : DialogFragment() {
     private val args by navArgs<WarningDialogFragmentArgs>()
 
@@ -44,13 +48,13 @@ class WarningDialogFragment : DialogFragment() {
             .setNeutralButton(args.neutralButton) { _, _ ->
                 setFragmentResult(
                     args.resultKey,
-                    WarningDialogResult.Cancel.toBundle()
+                    WarningDialogResult(DialogResult.Negative).toBundle()
                 )
                 findNavController().popBackStack()
             }.setPositiveButton(args.positiveButton) { _, _ ->
                 setFragmentResult(
                     args.resultKey,
-                    WarningDialogResult.Success.toBundle()
+                    WarningDialogResult(DialogResult.Ok, extra = args.extra).toBundle()
                 )
                 findNavController().popBackStack()
             }.create()

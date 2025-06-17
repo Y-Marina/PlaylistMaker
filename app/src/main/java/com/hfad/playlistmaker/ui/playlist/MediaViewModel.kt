@@ -33,6 +33,7 @@ data class PlaylistUiState(
 sealed class MediaCommand {
     data object NavigateToNewPlaylist : MediaCommand()
     data class NavigateToPlayer(val track: Track) : MediaCommand()
+    data class NavigateToPlaylist(val playlistId: Long) : MediaCommand()
 }
 
 class MediaViewModel(
@@ -68,7 +69,7 @@ class MediaViewModel(
     fun observeCommand(): LiveData<MediaCommand> = commandLiveData
 
     override fun onItemClick(item: PlaylistItemUiModel) {
-
+        commandLiveData.postValue(MediaCommand.NavigateToPlaylist(item.playlistWithTracks.playlist.id))
     }
 
     override fun onItemClick(item: SearchItemUiModel.Item) {

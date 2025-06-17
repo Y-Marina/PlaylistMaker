@@ -17,6 +17,7 @@ class SearchAdapter(val callback: Callback) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface Callback {
         fun onItemClick(item: SearchItemUiModel.Item)
+        fun onItemLongClick(item: SearchItemUiModel.Item) {}
         fun onClearHistoryClick() {}
     }
 
@@ -75,6 +76,21 @@ class SearchAdapter(val callback: Callback) :
                     if (item != null) {
                         callback.onItemClick(item)
                     }
+                }
+            }
+
+            binding.root.setOnLongClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = data[position] as? SearchItemUiModel.Item
+                    if (item != null) {
+                        callback.onItemLongClick(item)
+                        return@setOnLongClickListener true
+                    } else {
+                        return@setOnLongClickListener false
+                    }
+                } else {
+                    return@setOnLongClickListener false
                 }
             }
         }

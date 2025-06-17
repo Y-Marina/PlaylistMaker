@@ -31,7 +31,7 @@ class PlaylistImageRepositoryImpl(
     }
 
     override suspend fun getImage(fileName: String?): String? {
-       if (fileName.isNullOrEmpty()) return null
+        if (fileName.isNullOrEmpty()) return null
 
         return File(fileDir, fileName).absolutePath
     }

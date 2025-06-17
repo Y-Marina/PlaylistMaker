@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
+                R.id.menu_dialog_fragment,
+                R.id.playlist_fragment,
                 R.id.addToPlaylistDialogFragment,
                 R.id.create_playlist_fragment,
                 R.id.warning_dialog,

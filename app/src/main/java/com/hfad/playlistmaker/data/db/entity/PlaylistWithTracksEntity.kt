@@ -8,8 +8,8 @@ data class PlaylistWithTracksEntity(
     val playlistEntity: PlaylistEntity,
 
     @Relation(
-        parentColumn = "name",
-        entityColumn = "playlist_name",
+        parentColumn = "id",
+        entityColumn = "playlist_id",
         entity = PlaylistTrackEntity::class
     )
     val tracks: List<PlaylistTrackEntity>
