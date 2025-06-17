@@ -23,7 +23,7 @@ sealed class MenuCommand {
     data object NavigateToBack: MenuCommand()
     data class NavigateToShare(val playlistWithTracks: PlaylistWithTracks) : MenuCommand()
     data object ShowToast : MenuCommand()
-    data object NavigateToChangeInfo : MenuCommand()
+    data class NavigateToChangeInfo(val playlistId: Long) : MenuCommand()
     data object NavigateToDeletePlaylist : MenuCommand()
 }
 
@@ -36,9 +36,9 @@ class MenuBottomSheetViewModel(
     private val commandLiveData = SingleLiveEvent<MenuCommand>()
     fun observeCommand(): LiveData<MenuCommand> = commandLiveData
 
-    fun setPlaylist(playlistName: String) {
+    fun setPlaylistId(playlistId: Long) {
         viewModelScope.launch {
-            playlistInteractor.getPlaylistByName(playlistName)
+            playlistInteractor.getPlaylistById(playlistId)
                 .distinctUntilChanged()
                 .collect { playlistWithTracks ->
                     stateLiveData.postValue(stateLiveData.value?.copy(playlistWithTracks = playlistWithTracks))
@@ -57,6 +57,13 @@ class MenuBottomSheetViewModel(
         }
     }
 
+    fun onEditClicked() {
+        val playlist = stateLiveData.value?.playlistWithTracks
+        playlist?.let {
+            commandLiveData.postValue(MenuCommand.NavigateToChangeInfo(it.playlist.id))
+        }
+    }
+
     fun onDeleteMenuClicked() {
         commandLiveData.postValue(MenuCommand.NavigateToDeletePlaylist)
     }
@@ -64,7 +71,7 @@ class MenuBottomSheetViewModel(
     fun onDeletePlaylist() {
         commandLiveData.postValue(MenuCommand.NavigateToBack)
         viewModelScope.launch {
-            stateLiveData.value?.playlistWithTracks?.playlist?.name?.let {
+            stateLiveData.value?.playlistWithTracks?.playlist?.id?.let {
                 playlistInteractor.deletePlaylist(it)
             }
         }

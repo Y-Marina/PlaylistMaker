@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -18,6 +19,7 @@ import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.hfad.playlistmaker.ui.common.DialogResult
 import com.hfad.playlistmaker.ui.common.WarningDialogResult
+import com.hfad.playlistmaker.ui.common.setTextIfDiffer
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreatePlaylistFragment : Fragment() {
@@ -31,6 +33,9 @@ class CreatePlaylistFragment : Fragment() {
     private lateinit var binding: FragmentCreatePlaylistBinding
 
     private val viewModel: CreatePlaylistViewModel by viewModel()
+
+    private lateinit var nameTextWatcher: TextWatcher
+    private lateinit var descriptionTextWatcher: TextWatcher
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +67,17 @@ class CreatePlaylistFragment : Fragment() {
         binding.toolbar.let {
             it.setNavigationIcon(R.drawable.ic_arrow_back_24)
             it.setNavigationOnClickListener { viewModel.onBackClicked() }
+            it.title = if (args.playlistId == 0L) {
+                getString(R.string.new_playlist)
+            } else {
+                getString(R.string.edit_playlist)
+            }
+        }
+
+        binding.createBt.text = if (args.playlistId == 0L) {
+            getString(R.string.create)
+        } else {
+            getString(R.string.save)
         }
 
         val pickMedia =
@@ -74,34 +90,18 @@ class CreatePlaylistFragment : Fragment() {
         viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
         viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
+        viewModel.setEditPlaylistId(args.playlistId)
+
         binding.choosePoster.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        val nameTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.setPlaylistName(p0.toString())
-            }
-
-            override fun afterTextChanged(text: Editable?) {
-                viewModel.setPlaylistName(text.toString())
-            }
+        nameTextWatcher = binding.playlistNameEt.addTextChangedListener { text ->
+            viewModel.setPlaylistName(text.toString())
         }
 
-        val descriptionTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.setPlaylistDescription(p0.toString())
-            }
-
-            override fun afterTextChanged(text: Editable?) {
-                viewModel.setPlaylistDescription(text.toString())
-            }
+        descriptionTextWatcher = binding.playlistDescriptionEt.addTextChangedListener { text ->
+            viewModel.setPlaylistDescription(text.toString())
         }
 
         binding.playlistNameEt.addTextChangedListener(nameTextWatcher)
@@ -122,6 +122,18 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun handleUiState(state: CreatePlaylistUiState) {
         binding.choosePosterIm.setImageURI(state.photoUri)
+        with(binding.playlistNameEt) {
+            removeTextChangedListener(nameTextWatcher)
+            setTextIfDiffer(state.name)
+            addTextChangedListener(nameTextWatcher)
+        }
+
+        with(binding.playlistDescriptionEt) {
+            removeTextChangedListener(descriptionTextWatcher)
+            setTextIfDiffer(state.description)
+            addTextChangedListener(descriptionTextWatcher)
+        }
+
         binding.createBt.isEnabled = state.isCreateButtonEnabled
     }
 

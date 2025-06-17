@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Playlist(
+    val id: Long,
     val name: String,
     val description: String?,
     val photoUrl: String? = null

@@ -16,9 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hfad.playlistmaker.R
 import com.hfad.playlistmaker.common.dpToPx
 import com.hfad.playlistmaker.databinding.FragmentMenuBottomSheetBinding
-import com.hfad.playlistmaker.domian.models.Playlist
 import com.hfad.playlistmaker.domian.models.PlaylistWithTracks
-import com.hfad.playlistmaker.domian.models.Track
 import com.hfad.playlistmaker.ui.common.DialogResult
 import com.hfad.playlistmaker.ui.common.WarningDialogResult
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,13 +24,13 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.getValue
 
-class MenuBottomSheet : BottomSheetDialogFragment() {
+class MenuBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private val className = PlaylistFragment::class.qualifiedName
         private val deleteDialogKey = "${className}.deleteDialogKey"
     }
 
-    private val args by navArgs<MenuBottomSheetArgs>()
+    private val args by navArgs< MenuBottomSheetFragmentArgs>()
 
     private lateinit var binding: FragmentMenuBottomSheetBinding
 
@@ -61,9 +59,11 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
         viewModel.observeState().observe(viewLifecycleOwner) { handleUiState(it) }
         viewModel.observeCommand().observe(viewLifecycleOwner) { handleCommand(it) }
 
-        viewModel.setPlaylist(args.playlistName)
+        viewModel.setPlaylistId(args.playlistId)
 
         binding.shareTv.setOnClickListener { viewModel.onShareClick() }
+
+        binding.editInfoTv.setOnClickListener { viewModel.onEditClicked() }
 
         binding.deletePlaylistTv.setOnClickListener { viewModel.onDeleteMenuClicked() }
     }
@@ -99,10 +99,16 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            is MenuCommand.NavigateToChangeInfo -> {}
+            is MenuCommand.NavigateToChangeInfo -> navController.navigate(
+                MenuBottomSheetFragmentDirections.actionToCreatePlaylistFragment(
+                    resultKey = "",
+                    track = null,
+                    playlistId = command.playlistId
+                )
+            )
 
             is MenuCommand.NavigateToDeletePlaylist -> navController.navigate(
-                MenuBottomSheetDirections.toWarningDialog(
+                MenuBottomSheetFragmentDirections.toWarningDialog(
                     resultKey = deleteDialogKey,
                     title = getString(R.string.dialog_message_delete_playlist),
                     message = "",

@@ -15,7 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIconTint="@color/ic_color"
-        app:title="@string/new_playlist"
         app:titleTextColor="@color/settings_toolbar_color" />
 
     <com.google.android.material.card.MaterialCardView
@@ -93,7 +92,6 @@
         android:background="@drawable/select_button"
         android:enabled="false"
         android:fontFamily="@font/ys_text_medium"
-        android:text="@string/create"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="16sp"

@@ -30,7 +30,7 @@ sealed class PlaylistCommand {
     data class ShowDeleteTrackDialog(val track: Track) : PlaylistCommand()
     data class NavigateToShare(val playlistWithTracks: PlaylistWithTracks) : PlaylistCommand()
     data object ShowToast : PlaylistCommand()
-    data class NavigateToMenu(val playlistName: String) : PlaylistCommand()
+    data class NavigateToMenu(val playlistId: Long) : PlaylistCommand()
     data object NavigateToMediaFragment: PlaylistCommand()
 }
 
@@ -47,10 +47,10 @@ class PlaylistViewModel(
         commandLiveData.postValue(PlaylistCommand.NavigateBack)
     }
 
-    fun setPlaylistName(playlistName: String?) {
-        if (playlistName != null) {
+    fun setPlaylistName(playlistId: Long) {
+        if (playlistId != 0L) {
             viewModelScope.launch {
-                playlistInteractor.getPlaylistByName(playlistName)
+                playlistInteractor.getPlaylistById(playlistId)
                     .distinctUntilChanged()
                     .collect { playlistWithTracks ->
                         if (playlistWithTracks != null) {
@@ -73,8 +73,8 @@ class PlaylistViewModel(
 
     fun deleteTrackFromPlaylist(track: Track) {
         viewModelScope.launch {
-            stateLiveData.value?.playlistWithTracks?.playlist?.name?.let { name ->
-                playlistInteractor.deleteTrackFromPlaylist(track.trackId, name)
+            stateLiveData.value?.playlistWithTracks?.playlist?.id?.let { id ->
+                playlistInteractor.deleteTrackFromPlaylist(track.trackId, id)
             }
         }
     }
@@ -93,7 +93,7 @@ class PlaylistViewModel(
     fun onMenuClick() {
         val playlist = stateLiveData.value?.playlistWithTracks
         playlist?.let {
-            commandLiveData.postValue(PlaylistCommand.NavigateToMenu(it.playlist.name))
+            commandLiveData.postValue(PlaylistCommand.NavigateToMenu(it.playlist.id))
         }
 
     }

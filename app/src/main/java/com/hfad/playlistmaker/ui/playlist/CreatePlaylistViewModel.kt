@@ -3,6 +3,7 @@ package com.hfad.playlistmaker.ui.playlist
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +13,9 @@ import com.hfad.playlistmaker.common.SingleLiveEvent
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.models.Playlist
 import com.hfad.playlistmaker.domian.models.Track
-import com.hfad.playlistmaker.domian.storage.PlaylistImageRepository
 import com.hfad.playlistmaker.ui.common.getParcelableCompatWrapper
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -21,7 +23,8 @@ import kotlinx.serialization.Serializable
 data class CreatePlaylistUiState(
     val name: String = "",
     val description: String? = null,
-    val photoUri: Uri? = null
+    val photoUri: Uri? = null,
+    val editedPlaylistId: Long? = null
 ) {
     val isCreateButtonEnabled by lazy {
         name.isNotEmpty()
@@ -71,6 +74,37 @@ class CreatePlaylistViewModel(
         this.track = track
     }
 
+    fun setEditPlaylistId(id: Long) {
+        val editedPlaylistId = stateLiveData.value?.editedPlaylistId
+        if (id != 0L && editedPlaylistId == null) {
+
+//            stateLiveData.value =
+//                stateLiveData.value?.copy(
+//                    name = "playlist.playlist.name",
+//                    description = "playlist.playlist.description",
+//                    photoUri = null,
+//                    editedPlaylistName = name
+//                )
+
+            viewModelScope.launch {
+                playlistInteractor.getPlaylistById(id)
+                    .distinctUntilChanged()
+                    .filterNotNull()
+                    .collect { playlist ->
+                        stateLiveData.postValue(
+                            stateLiveData.value?.copy(
+                                name = playlist.playlist.name,
+                                description = playlist.playlist.description,
+                                photoUri = playlist.playlist.photoUrl?.toUri(),
+                                editedPlaylistId = id
+                            )
+                        )
+                    }
+            }
+        }
+
+    }
+
     fun setPlaylistPhoto(uri: Uri) {
         stateLiveData.postValue(stateLiveData.value?.copy(photoUri = uri))
     }
@@ -89,12 +123,13 @@ class CreatePlaylistViewModel(
         state?.let { prefState ->
             viewModelScope.launch {
                 try {
-                    playlistInteractor.addPlaylist(
+                    val playlist = playlistInteractor.addPlaylist(
                         playlist = Playlist(
+                            id = 0L,
                             name = prefState.name,
                             description = prefState.description
                         ),
-                        photoUrl = stateLiveData.value?.photoUri.toString()
+                        photoUrl = stateLiveData.value?.photoUri?.toString()
                     )
 
                     if (track == null) {
@@ -106,12 +141,14 @@ class CreatePlaylistViewModel(
                             )
                         )
                     } else {
-                        track?.let {
-                            playlistInteractor.addTrackToPlaylist(
-                                it,
-                                java.time.Instant.now().epochSecond,
-                                prefState.name
-                            )
+                        if (playlist != null) {
+                            track?.let {
+                                playlistInteractor.addTrackToPlaylist(
+                                    track = it,
+                                    time = java.time.Instant.now().epochSecond,
+                                    playlistId = playlist.id
+                                )
+                            }
                         }
 
                         commandLiveData.postValue(

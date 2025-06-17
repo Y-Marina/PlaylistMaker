@@ -82,14 +82,14 @@ class AddToPlaylistDialogViewModel(
             val isHasTrack =
                 playlistInteractor.getTrackFromPlaylist(
                     track.trackId,
-                    item.playlistWithTracks.playlist.name
+                    item.playlistWithTracks.playlist.id
                 )
                     .isNotEmpty()
             if (!isHasTrack) {
                 playlistInteractor.addTrackToPlaylist(
                     track,
                     java.time.Instant.now().epochSecond,
-                    item.playlistWithTracks.playlist.name
+                    item.playlistWithTracks.playlist.id
                 )
                 commandLiveData.postValue(DialogCommand.Success(name = item.playlistWithTracks.playlist.name))
             } else {

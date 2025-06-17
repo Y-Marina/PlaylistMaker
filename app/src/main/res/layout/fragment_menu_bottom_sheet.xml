@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_bottom_sheet_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_to_black"
     android:orientation="vertical"
-    tools:context=".ui.playlist.MenuBottomSheet">
+    tools:context=".ui.playlist.MenuBottomSheetFragment">
 
     <ImageView
         android:id="@+id/menu_drag_item_im"

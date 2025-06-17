@@ -19,6 +19,7 @@ private fun PlaylistWithTracksEntity.toPlaylistWithTracks() = PlaylistWithTracks
 )
 
 private fun PlaylistEntity.toPlaylist() = Playlist(
+    id = id,
     name = name,
     description = description,
     photoUrl = photoUrl
@@ -43,7 +44,7 @@ private fun PlaylistTrackEntity.toTrack() = Track(
     previewUrl = previewUrl
 )
 
-private fun Track.toPlaylistTrackEntity(time: Long, playlistName: String) = PlaylistTrackEntity(
+private fun Track.toPlaylistTrackEntity(time: Long, playlistId: Long) = PlaylistTrackEntity(
     trackId = trackId,
     trackName = trackName,
     artistName = artistName,
@@ -55,7 +56,7 @@ private fun Track.toPlaylistTrackEntity(time: Long, playlistName: String) = Play
     country = country,
     previewUrl = previewUrl,
     addTime = time,
-    playlistName = playlistName
+    playlistId = playlistId
 )
 
 class PlaylistRepositoryImpl(
@@ -64,14 +65,19 @@ class PlaylistRepositoryImpl(
     private val playlistDao = appDatabase.playlistDao()
     private val playlistTrackDao = appDatabase.playlistTrackDao()
 
-    override suspend fun addPlaylist(playlist: Playlist) {
-        appDatabase.withTransaction {
+    override suspend fun addPlaylist(playlist: Playlist): Playlist? {
+        return appDatabase.withTransaction {
             playlistDao.insertPlaylist(playlist.toPlaylistEntity())
+            return@withTransaction playlistDao.getPlaylistByName(playlist.name).firstOrNull()?.toPlaylist()
         }
     }
 
-    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks?> {
-        return appDatabase.playlistDao().getPlaylistByName(name).map { it?.toPlaylistWithTracks() }
+    override suspend fun getPlaylistById(id: Long): Flow<PlaylistWithTracks?> {
+        return appDatabase.playlistDao().getPlaylistById(id).map { it?.toPlaylistWithTracks() }
+    }
+
+    override suspend fun getPlaylistByName(name: String): Playlist? {
+        return appDatabase.playlistDao().getPlaylistByName(name).firstOrNull()?.toPlaylist()
     }
 
     override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
@@ -82,28 +88,28 @@ class PlaylistRepositoryImpl(
             .distinctUntilChanged()
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, time: Long, playlistName: String) {
+    override suspend fun addTrackToPlaylist(track: Track, time: Long, playlistId: Long) {
         appDatabase.withTransaction {
-            val entity = track.toPlaylistTrackEntity(time, playlistName)
+            val entity = track.toPlaylistTrackEntity(time, playlistId)
             playlistTrackDao.addTrackToPlaylist(entity)
         }
     }
 
     override suspend fun getTrackFromPlaylist(
         trackId: Long,
-        playlistName: String
+        playlistId: Long
     ): List<PlaylistTrackEntity> {
-        return appDatabase.playlistTrackDao().getTrackFromPlaylist(trackId, playlistName)
+        return appDatabase.playlistTrackDao().getTrackFromPlaylist(trackId, playlistId)
     }
 
-    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
-        return appDatabase.playlistTrackDao().deleteTrackFromPlaylist(trackId, playlistName)
+    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistId: Long) {
+        return appDatabase.playlistTrackDao().deleteTrackFromPlaylist(trackId, playlistId)
     }
 
-    override suspend fun deletePlaylist(playlistName: String) {
+    override suspend fun deletePlaylist(playlistId: Long) {
         appDatabase.withTransaction {
-            playlistTrackDao.deleteTrackFromPlaylist(playlistName)
-            playlistDao.deletePlaylist(playlistName)
+            playlistTrackDao.deleteTrackFromPlaylist(playlistId)
+            playlistDao.deletePlaylist(playlistId)
         }
     }
 }

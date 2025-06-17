@@ -1,5 +1,6 @@
 package com.hfad.playlistmaker.domian.impl
 
+import com.hfad.playlistmaker.data.db.entity.PlaylistEntity
 import com.hfad.playlistmaker.data.db.entity.PlaylistTrackEntity
 import com.hfad.playlistmaker.domian.db.PlaylistInteractor
 import com.hfad.playlistmaker.domian.db.PlaylistRepository
@@ -14,18 +15,22 @@ class PlaylistInteractorImpl(
     private val playlistRepository: PlaylistRepository,
     private val playlistImageStorage: PlaylistImageRepository
 ) : PlaylistInteractor {
-    override suspend fun addPlaylist(playlist: Playlist, photoUrl: String?) {
+    override suspend fun addPlaylist(playlist: Playlist, photoUrl: String?): Playlist? {
         val fileName = photoUrl?.let { playlistImageStorage.uploadImage(it) }
-        playlistRepository.addPlaylist(playlist.copy(photoUrl = fileName))
+        return playlistRepository.addPlaylist(playlist.copy(photoUrl = fileName))
     }
 
-    override suspend fun getPlaylistByName(name: String): Flow<PlaylistWithTracks?> {
-        return playlistRepository.getPlaylistByName(name).map { playlistWithTracks ->
+    override suspend fun getPlaylistById(id: Long): Flow<PlaylistWithTracks?> {
+        return playlistRepository.getPlaylistById(id).map { playlistWithTracks ->
             val photoUrl = getPhotoUrl(playlistWithTracks?.playlist?.photoUrl)
             playlistWithTracks?.copy(
                 playlist = playlistWithTracks.playlist.copy(photoUrl = photoUrl)
             )
         }
+    }
+
+    override suspend fun getPlaylistByName(name: String): Playlist? {
+        return playlistRepository.getPlaylistByName(name)
     }
 
     override suspend fun getAllPlaylists(): Flow<List<PlaylistWithTracks>> {
@@ -39,23 +44,23 @@ class PlaylistInteractorImpl(
         }
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, time: Long, playlistName: String) {
-        return playlistRepository.addTrackToPlaylist(track, time, playlistName)
+    override suspend fun addTrackToPlaylist(track: Track, time: Long, playlistId: Long) {
+        return playlistRepository.addTrackToPlaylist(track, time, playlistId)
     }
 
     override suspend fun getTrackFromPlaylist(
         trackId: Long,
-        playlistName: String
+        playlistId: Long
     ): List<PlaylistTrackEntity> {
-        return playlistRepository.getTrackFromPlaylist(trackId, playlistName)
+        return playlistRepository.getTrackFromPlaylist(trackId, playlistId)
     }
 
-    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistName: String) {
-        return playlistRepository.deleteTrackFromPlaylist(trackId, playlistName)
+    override suspend fun deleteTrackFromPlaylist(trackId: Long, playlistId: Long) {
+        return playlistRepository.deleteTrackFromPlaylist(trackId, playlistId)
     }
 
-    override suspend fun deletePlaylist(playlistName: String) {
-        playlistRepository.deletePlaylist(playlistName)
+    override suspend fun deletePlaylist(playlistId: Long) {
+        playlistRepository.deletePlaylist(playlistId)
     }
 
     suspend fun getPhotoUrl(fileName: String?): String {

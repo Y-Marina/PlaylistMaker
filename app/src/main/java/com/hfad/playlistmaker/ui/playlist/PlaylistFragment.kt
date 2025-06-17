@@ -46,7 +46,7 @@ class PlaylistFragment : Fragment() {
 
         binding = FragmentPlaylistBinding.inflate(layoutInflater)
 
-        viewModel.setPlaylistName(args.playlistName)
+        viewModel.setPlaylistName(args.playlistId)
     }
 
     override fun onCreateView(
@@ -148,7 +148,7 @@ class PlaylistFragment : Fragment() {
             ).show()
 
             is PlaylistCommand.NavigateToMenu -> navController.navigate(
-                PlaylistFragmentDirections.actionToMenuBottomSheet(command.playlistName)
+                PlaylistFragmentDirections.actionToMenuBottomSheet(command.playlistId)
             )
 
             is PlaylistCommand.NavigateToMediaFragment -> navController.navigate(
