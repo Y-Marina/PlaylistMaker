@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 
 private fun PlaylistWithTracksEntity.toPlaylistWithTracks() = PlaylistWithTracks(
     playlist = playlistEntity.toPlaylist(),
-    tracks = tracks.map { it.toTrack() }
+    tracks = tracks.sortedByDescending { it.addTime }.map { it.toTrack() }
 )
 
 private fun PlaylistEntity.toPlaylist() = Playlist(
