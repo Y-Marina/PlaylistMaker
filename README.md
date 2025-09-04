@@ -13,4 +13,6 @@
 - Glide
 - Kotlin Coroutines
 
+[apk для установки](PlayListMaker.apk)
+
 ![demo](demo.gif)
